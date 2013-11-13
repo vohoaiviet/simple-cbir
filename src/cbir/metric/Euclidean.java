@@ -10,11 +10,11 @@ import cbir.interfaces.Metric;
  * @author Chris Wendler
  * 
  */
-public class Gaussian implements Metric {
+public class Euclidean implements Metric {
 
 	@Override
 	/**
-	 * Computes the gaussian distance between two images.
+	 * Computes the euclidean distance between two images.
 	 * 
 	 * @param a
 	 * 			An image.

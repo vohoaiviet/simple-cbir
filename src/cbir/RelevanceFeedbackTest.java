@@ -16,7 +16,7 @@ import cbir.image.DescriptorType;
 import cbir.image.Image;
 import cbir.interfaces.Metric;
 import cbir.interfaces.RelevanceFeedback;
-import cbir.metric.WeightedGaussian;
+import cbir.metric.WeightedEuclidean;
 import cbir.reader.FireReader;
 import cbir.reader.XMLReader;
 import cbir.retriever.RetrieverDistanceBased;
@@ -143,7 +143,7 @@ public class RelevanceFeedbackTest {
 		try {
 
 			// TODO change metric, descriptor & normalization here
-			Metric metric = new WeightedGaussian(null);
+			Metric metric = new WeightedEuclidean(null);
 			DescriptorType type = DescriptorType.MERGED;
 			Normalization normalization = Normalization.GAUSSIAN_0to1;
 

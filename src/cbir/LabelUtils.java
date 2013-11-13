@@ -21,9 +21,9 @@ public class LabelUtils {
 	 *            database to be labelled
 	 */
 	public static void labelDatabase(List<Image> database) {
-		Iterator it = database.iterator();
+		Iterator<Image> it = database.iterator();
 		while (it.hasNext()) {
-			Image temp = (Image) it.next();
+			Image temp = it.next();
 			String[] filename = temp.getFilename().split(Pattern.quote("\\"));
 			// get last sub-folder
 			String label = filename[filename.length - 2];

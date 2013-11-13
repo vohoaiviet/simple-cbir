@@ -44,17 +44,16 @@ public class WeightedCosine implements Metric {
 			result = enumerator / denominator;
 		// use this only in combination with feature vectors that only contain
 		// positive values
-
 		return 1 - result;
 	}
 
 	/**
 	 * Initializes weights for the merged descriptor in order to weight each
 	 * individual descriptor instead of each individual feature. FeatureWeight =
-	 * 1/(DescriptorAmount*CurrentDescriptorLength)
+	 * 1/(DescriptorAmount*CurrentDescriptorLength).
 	 * 
 	 * @param query
-	 *            the query image
+	 *            the query image.
 	 * @param type
 	 *            The descriptor type used.
 	 */

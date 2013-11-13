@@ -8,7 +8,7 @@ import cbir.image.Image;
 import cbir.interfaces.Metric;
 import cbir.interfaces.RelevanceFeedback;
 import cbir.interfaces.Retriever;
-import cbir.metric.WeightedGaussian;
+import cbir.metric.WeightedEuclidean;
 import cbir.retriever.RetrieverDistanceBased;
 
 /**
@@ -61,7 +61,7 @@ public class MarsGaussian implements RelevanceFeedback {
 			List<Image> negatives, int resultAmount) {
 		Utility.addImagesToList(query.getPositives(), positives);
 		Utility.addImagesToList(query.getNegatives(), negatives);
-		return new RetrieverDistanceBased(retriever.getDatabase(),new WeightedGaussian(reweightFeatures(query, query.getPositives(), type))).search(query,
+		return new RetrieverDistanceBased(retriever.getDatabase(),new WeightedEuclidean(reweightFeatures(query, query.getPositives(), type))).search(query,
 				type, resultAmount);
 	}
 
