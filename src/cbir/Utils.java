@@ -1,7 +1,8 @@
 package cbir;
 
 /**
- * A class which provides utility functions.
+ * A class which provides utility functions for classes in the cbir package.
+ * Most of the methods provided are used to read and write external files.
  * 
  * @author Chris Wendler
  */
@@ -18,14 +19,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cbir.image.DescriptorType;
-import cbir.image.Image;
 
 public class Utils {
 
 	/**
-	 * 
-	 * @param filename
-	 * @param numbers
+	 * Prints a list of integers to a given outputfile.
+	 * @param filename the name of the destination file.
+	 * @param numbers the numbers that should be written into the file.
 	 */
 	public static void printIntListToFile(String filename, List<Integer> numbers) {
 		String message = "" + numbers.get(0);
@@ -36,11 +36,11 @@ public class Utils {
 	}
 
 	/**
-	 * 
-	 * @param filename
-	 * @return
-	 * @throws NumberFormatException
-	 * @throws IOException
+	 * Reads a list of integers separated by spaces.
+	 * @param filename the name of the file containing the numbers.
+	 * @return a list of read integers.
+	 * @throws NumberFormatException is thrown if a token is not parsable to an integer.
+	 * @throws IOException is thrown if the input file is not found.
 	 */
 	public static List<Integer> readIntListFromFile(String filename)
 			throws NumberFormatException, IOException {
@@ -59,94 +59,6 @@ public class Utils {
 		return values;
 	}
 
-	/**
-	 * 
-	 * @param filename
-	 * @return
-	 * @throws IOException
-	 */
-	public static RFAssistant createRFAssistant(String filename)
-			throws IOException {
-		LinkedList<String> positives = new LinkedList<String>();
-		LinkedList<String> negatives = new LinkedList<String>();
-		File file = new File(filename);
-		if (file.exists()) {
-			boolean readPositives = false;
-			boolean readNegatives = false;
-			System.out.println(filename + " exists");
-			InputStream fileStream = new FileInputStream(file);
-			Reader decoder = new InputStreamReader(fileStream);
-			BufferedReader reader = new BufferedReader(decoder);
-			String line;
-			/* parse positives and negatives */
-			while ((line = reader.readLine()) != null) {
-				String[] tokens = line.split(System
-						.getProperty("line.separator"));
-				System.out.println(Arrays.toString(tokens));
-				for (String token : tokens) {
-					System.out.println(readPositives + "+-" + readNegatives);
-					if (token.equals("positives")) {
-						System.out.println("read: positives");
-						readPositives = true;
-						readNegatives = false;
-						continue;
-					}
-					if (token.equals("negatives")) {
-						System.out.println("read: negatives");
-						readPositives = false;
-						readNegatives = true;
-						continue;
-					}
-					if (readPositives) {
-						positives.add(token);
-						System.out.println("read: " + token);
-						continue;
-					}
-					if (readNegatives) {
-						negatives.add(token);
-						System.out.println("read: " + token);
-						continue;
-					}
-				}
-			}
-			reader.close();
-		}
-		return new RFAssistant(positives, negatives);
-	}
-
-	/**
-	 * 
-	 * @param filename
-	 * @param query
-	 * @throws IOException
-	 */
-	public static void printQueryHits(String filename, Image query)
-			throws IOException {
-		List<String> positives = new LinkedList<String>();
-		List<String> negatives = new LinkedList<String>();
-		File file = new File(filename);
-		if (file.exists()) {
-			RFAssistant assi = createRFAssistant(filename);
-			positives = assi.getPositives();
-			negatives = assi.getNegatives();
-		}
-		for (Image curr : query.getPositives())
-			if (!positives.contains(curr.getFilename()))
-				positives.add(curr.getFilename());
-		for (Image curr : query.getNegatives())
-			if (!negatives.contains(curr.getFilename()))
-				negatives.add(curr.getFilename());
-
-		FileWriter out = new FileWriter(file, false);
-		out.write("positives" + System.getProperty("line.separator"));
-
-		for (String curr : positives)
-			out.write(curr + System.getProperty("line.separator"));
-		out.write("negatives" + System.getProperty("line.separator"));
-		for (String curr : negatives)
-			out.write(curr + System.getProperty("line.separator"));
-		out.close();
-	}
 
 	/**
 	 * Writes a message into a file.
@@ -164,7 +76,6 @@ public class Utils {
 			out.write(message);
 			out.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -235,10 +146,21 @@ public class Utils {
 		return result;
 	}
 
+	/**
+	 * Calculates the logarithm of x to the base "base".
+	 * @param x is the number for which the logarithm is computed.
+	 * @param base is the base of the logarithm.
+	 * @return The logarithm of x to the given base.
+	 */
 	public static double LogBaseX(double x, double base) {
 		return Math.log(x) / Math.log(base);
 	}
 
+	/**
+	 * Returns the suffix of the descriptor files of a given descriptor-type.
+	 * @param type
+	 * @return a string containing the suffix.
+	 */
 	public static String getSuffix(DescriptorType type) {
 		String result = null;
 		switch (type) {
@@ -250,7 +172,8 @@ public class Utils {
 	}
 
 	/**
-	 *  
+	 * Convert a list of Double objects to an array of double values.
+	 * @param the list of Double object that should be converted.
 	 */
 	public static double[] doubleFromDouble(List<Double> values) {
 		double[] result = new double[values.size()];
@@ -259,6 +182,12 @@ public class Utils {
 		return result;
 	}
 
+	/**
+	 * Concatenates two double arrays.
+	 * @param merged the first array.
+	 * @param is the second array.
+	 * @return the concatanated array.
+	 */
 	public static double[] concat(double[] merged, double[] is) {
 		double result[] = new double[merged.length + is.length];
 		result = Arrays.copyOf(merged, merged.length + is.length);
@@ -266,16 +195,4 @@ public class Utils {
 		return result;
 	}
 
-	public static double[] normalize(double[] histogram, double histoMax) {
-		double[] result = Arrays.copyOf(histogram, histogram.length);
-		double factor = 1.d / histoMax;
-		for (int i = 0; i < histogram.length; i++)
-			result[i] *= factor;
-		return result;
-	}
-
-	public static void main(String[] args) {
-		double[] arr = { 1, 2, 3, 1, 4 };
-		System.out.println(Arrays.toString(concat(new double[1], arr)));
-	}
 }

@@ -18,6 +18,7 @@ import cbir.Utils;
  * optional label.
  * 
  * @author Matej Stanic
+ * @author Chris Wendler
  * 
  */
 public class Image implements Serializable {
