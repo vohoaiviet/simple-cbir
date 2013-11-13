@@ -9,5 +9,5 @@ import java.io.Serializable;
  * 
  */
 public enum DescriptorType implements Serializable{
-	CEDD, COLOR_HISTO, MPEG_EHD, MERGED, NORMALIZED
+	CEDD, COLOR_HISTO, MPEG_EHD, MERGED, NORMALIZED, OTHER
 }

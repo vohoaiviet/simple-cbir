@@ -14,15 +14,25 @@ import cbir.Utils;
 import cbir.image.Descriptor;
 import cbir.image.DescriptorType;
 import cbir.image.Image;
+/**
+ * A very simple reader that is able to read histograms of the given format:
+ * + (optional) The histograms can contain a delimiter "counter" followed by one double value, if the "counter"
+ *   delimiter is used it has to be located in front of the data part. 
+ * * The histogram files have to be compressed using gzip.
+ * * The histograms have to contain the delimiter "data" followed by an arbitrary amount of
+ *   double values.
+ * * The descriptors have to be located in the image directory.
+ * @author Chris Wendler
+ */
 
 public class FireReader {
 	
 	/**
-	 * reads all the corresponding fire descriptors from a specific type into the according image datastructure
-	 * note: the descriptors have to be located in the same directory as the images
-	 * @param images
-	 * @param type
-	 * @throws IOException
+	 * Reads all the corresponding descriptors from a specific type into the according image data-structure.
+	 * note: the descriptors have to be located in the same directory as the images.
+	 * @param images a list of images that can be generated using the XMLReader.
+	 * @param type the type determines where the descriptors get stored in the image data-structure.
+	 * @throws IOException when a descriptor file is not found.
 	 */
 	public void readDescriptors(List<Image> images,DescriptorType type) throws IOException{
 		String suffix = Utils.getSuffix(type);
@@ -31,11 +41,10 @@ public class FireReader {
 	}
 	
 	/**
-	 * reads a descriptorfile
-	 * @param file
-	 * @param type
-	 * @return
-	 * @throws IOException
+	 * Reads a single descriptor from a given file.
+	 * @param file is the filename of the descriptor file.
+	 * @param type the type determines where the descriptors get stored in the image data-structure.
+	 * @throws IOException when a descriptor file is not found.
 	 */
 	public Descriptor readDescriptorFile(String file, DescriptorType type) throws IOException{
 		List<Double> values = null;
