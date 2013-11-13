@@ -23,7 +23,7 @@ import cbir.retriever.RetrieverDistanceBased;
 
 public class RelevanceFeedbackTest {
 	// TODO change output file here
-	public static String resultFolder = "C:\\Users\\Chris\\Desktop\\livedemo\\";
+	public static String resultFolder = "C:\\Users\\Chris\\Desktop\\";
 	public static String outputfile = resultFolder
 			+ "livedemo_cars.html";
 
@@ -118,8 +118,8 @@ public class RelevanceFeedbackTest {
 
 				System.out
 						.println("precision of previous query: "
-								+ (((double) (positives.size() / (double) (positives
-										.size() + negatives.size())))*(double)100));
+								+ ((positives.size() / (double) (positives
+										.size() + negatives.size()))*100));
 
 				result = rf.relevanceFeedbackIteration(retriever, query, type,
 						metric, positives, negatives, 20);
@@ -150,9 +150,9 @@ public class RelevanceFeedbackTest {
 			long starttime, endtime;
 			starttime = System.currentTimeMillis();
 
-			// List<Image> database = new XMLReader()
-			// .parseXMLFile(new File(
-			// "C:\\MBOX\\signed_all\\lentos_color_ehd_2.xml"));
+			 List<Image> database = new XMLReader()
+			 .parseXMLFile(new File(
+			 "C:\\MBOX\\signed_all\\lentos_color_ehd_2.xml"));
 
 			// List<Image> database = new XMLReader()
 			// .parseXMLFile(new File(
@@ -161,8 +161,8 @@ public class RelevanceFeedbackTest {
 
 			// cars
 			// TODO change XML file here (EHD)
-			 List<Image> database = new XMLReader().parseXMLFile(new File(
-			 "C:\\MBOX\\signed_all\\cars_ehd.xml"));
+//			 List<Image> database = new XMLReader().parseXMLFile(new File(
+//			 "C:\\MBOX\\signed_all\\cars_ehd.xml"));
 
 //			List<Image> database = new XMLReader().parseXMLFile(new File(
 //					"C:\\MBOX\\signed_all\\madias_index.xml"));
@@ -256,19 +256,14 @@ public class RelevanceFeedbackTest {
 			// queries.add(retriever.getImageByName(
 			// "C:\\MBOX\\signed\\hdk_5730.jpg").deepCopy());
 			try {
-//				 queries.add(retriever.getImageByName(
-//				 "C:\\MBOX\\signed_all\\cars_signed\\hdk_5730.jpg").deepCopy());
-				 queries.add(retriever.getImageByName(
-				 "C:\\MBOX\\signed_all\\cars_signed\\hdk_5730.jpg").deepCopy());
-				 queries.add(retriever.getImageByName(
-				 "C:\\MBOX\\signed_all\\cars_signed\\hdk_1025.jpg").deepCopy());
-				 queries.add(retriever.getImageByName(
-				 "C:\\MBOX\\signed_all\\cars_signed\\hdk_1494.jpg").deepCopy());
-				 queries.add(database.get((int) (Math.random()*10000) %
-					 database.size()).deepCopy());
-				 queries.add(database.get((int) (Math.random()*10000) %
-						 database.size()).deepCopy());
-				
+				 queries.add(retriever
+				 .getImageByName("C:\\MBOX\\signed_all\\Lentos_signed\\0_000_000_063.jpg").deepCopy());
+				 queries.add(retriever
+				 .getImageByName("C:\\MBOX\\signed_all\\Lentos_signed\\0_000_001_161.jpg").deepCopy());
+				 queries.add(retriever
+				 .getImageByName("C:\\MBOX\\signed_all\\Lentos_signed\\0_000_009_410.jpg").deepCopy());
+				 queries.add(retriever
+				 .getImageByName("C:\\MBOX\\signed_all\\Lentos_signed\\0_000_001_023.jpg").deepCopy());
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -306,7 +301,7 @@ public class RelevanceFeedbackTest {
 						+ (endtime - starttime) + " ms.</p>");
 				// TODO: change rf here
 				// new NearestNeighbors(new NNBayesScore(metric, new BayesScore(metric, results), new NNScore(metric)))
-				relevanceFeedbackDemo(new Bayesian(), retriever,
+				relevanceFeedbackDemo(new Bayesian(false), retriever,
 						query, type, metric, results);
 			}
 

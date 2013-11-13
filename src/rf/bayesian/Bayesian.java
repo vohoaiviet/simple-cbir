@@ -1,7 +1,6 @@
 package rf.bayesian;
 
 import java.util.List;
-
 import rf.Utility;
 import cbir.image.Descriptor;
 import cbir.image.DescriptorType;
@@ -10,16 +9,45 @@ import cbir.interfaces.Metric;
 import cbir.interfaces.RelevanceFeedback;
 import cbir.interfaces.Retriever;
 
+/**
+ * This class implements the Bayesian Query Shifting.
+ * 
+ * @author Chris Wendler
+ */
 public class Bayesian implements RelevanceFeedback {
+	
 	private double[] expectationRelevant, expectationIrrelevant;
 	private double scatterWithin, scatterBetween;
 	private double sigmaSquare;
+	private boolean useScatterSigma = true;
 	
+	/**
+	 * If you use the default constructor the approximation chosen for sigma is
+	 * the product of scatterWithin and scatterBetween.
+	 */
 	public Bayesian(){
 		super();
 	}
 	
-
+	/**
+	 * The boolean flag of the constructor denotes which approximation is used for simga.
+	 * @param useScatterSigma if this is true sigmaSquare equals the product of scatterBetween and scatterWithin,
+	 * else sigmaSquare is the average Variance of the positives and negatives. 
+	 */
+	public Bayesian(boolean useScatterSigma){
+		super();
+		this.useScatterSigma = useScatterSigma;
+	}
+	
+	/**
+	 * Calculates the scatter within, which is necessary for the approximation of the Variance.
+	 * @param positives is the list of positively marked images.
+	 * @param negatives is the list of negatively marked images.
+	 * @param expectationsRelevant is the expectation value of the relevant images.
+	 * @param expectationsIrrelevant is the expectation value of the irrelevant images.
+	 * @param type is the descriptor type which is considered for the calculation.
+	 * @return the calculated value for scatter within.
+	 */
 	private double calculateScatterWithin(List<Image> positives,
 			List<Image> negatives, double[] expectationsRelevant,
 			double[] expectationsIrrelevant, DescriptorType type) {
@@ -60,6 +88,12 @@ public class Bayesian implements RelevanceFeedback {
 		return result;
 	}
 
+	/**
+	 * Calculates the value scatter between which is used to approximate the variance.
+	 * @param expectationsRelevant is the expectation value of the relevant images.
+	 * @param expectationsIrrelevant  is the expectation value of the irrelevant images.
+	 * @return the calculated value for scatter between.
+	 */
 	private double calculateScatterBetween(double[] expectationsRelevant,
 			double[] expectationsIrrelevant) {
 		double result = 0;
@@ -72,6 +106,16 @@ public class Bayesian implements RelevanceFeedback {
 		return result;
 	}
 	
+	/**
+	 * Calculates a different approximation for the variance by adding up the variance 
+	 * of the relevant images with the variance of the irrelevant images.
+	 * @param positives is the list of positively marked images.
+	 * @param negatives is the list of negatively marked images.
+	 * @param expectationsRelevant is the expectation value of the relevant images.
+	 * @param expectationsIrrelevant is the expectation value of the irrelevant images.
+	 * @param type is the descriptor type which is considered for the calculation.
+	 * @return an approximation for the variance.
+	 */
 	private double calculateAverageVariance(List<Image> positives,
 			List<Image> negatives, double[] expectationsRelevant,
 			double[] expectationsIrrelevant, DescriptorType type) {
@@ -93,6 +137,12 @@ public class Bayesian implements RelevanceFeedback {
 		
 	}
 	
+	/**
+	 * Performs the query shifting.
+	 * @param query the old query image.
+	 * @param type the type of descriptor which has to be considered.
+	 * @return The new (shifted) query image is returned.
+	 */
 	public Image shiftQuery(Image query,
 			DescriptorType type) {
 		int NN = query.getNegatives().size();
@@ -112,8 +162,10 @@ public class Bayesian implements RelevanceFeedback {
 		scatterWithin = calculateScatterWithin(query.getPositives(), query.getNegatives(),
 				expectationRelevant, expectationIrrelevant, type);
 		
-		sigmaSquare = scatterBetween * scatterWithin;
-		//sigmaSquare = calculateAverageVariance(positives, negatives, expectationRelevant, expectationIrrelevant, type);
+		if(useScatterSigma)
+			sigmaSquare = scatterBetween * scatterWithin;
+		else
+			sigmaSquare = calculateAverageVariance(query.getPositives(), query.getNegatives(), expectationRelevant, expectationIrrelevant, type);
 		
 		int length = query.getDescriptor(type).getValues().length;
 		double[] shiftedQuery = new double[length];
@@ -136,10 +188,7 @@ public class Bayesian implements RelevanceFeedback {
 	}
 
 
-	/**
-	 * positives and negatives must have at least a length of 2 otherwise the
-	 * sigma computation wont work
-	 */
+	
 	@Override
 	public List<Image> relevanceFeedbackIteration(Retriever retriever,
 			Image query, DescriptorType type, Metric metric,

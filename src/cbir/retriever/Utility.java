@@ -62,7 +62,7 @@ public class Utility {
 			out.write("<div>"+System.getProperty("line.separator"));
 			for (Image curr : results) {
 				if(curr != null){
-					out.write("	<div style=\"float: left; padding-left: 5px; color: white; width:150px; height:150px; background:url("+toLinuxPath(curr.getFilename())+") no-repeat;\"><b style=\"background-color: black;\">"+i+"</b></div>");
+					out.write("	<div style=\"float: left; padding-left: 5px; color: white; width:150px; height:150px; background:url("+toLinuxPath(curr.getFilename())+") no-repeat; background-size:100%;\"><b style=\"background-color: black;\">"+i+"</b></div>");
 					out.write(System.getProperty("line.separator"));
 				}
 					//out.write(i + " <img src=\"" + curr.getFilename() + "\" width=\"150px\" height=\"150px\"/>\n");
