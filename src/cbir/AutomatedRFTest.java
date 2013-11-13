@@ -80,7 +80,7 @@ public class AutomatedRFTest {
 				}
 			}
 			QueryPrecision[currQuery][j] = (double) numPositives / (double) numOfResults;
-			precision[j] += ((double) numPositives / (double) numOfResults) / (double) numOfQueries;
+			precision[j] += ((double) numPositives / (double) numOfResults) / numOfQueries;
 			
 			if (j >= numOfRFIterations) {
 				break;
@@ -204,7 +204,7 @@ public class AutomatedRFTest {
 				Utils.printToFile(outputfile, "<p> query: "
 						+ (endtime - starttime) + " ms.</p>");
 				//new NNBayesScore(metric,new BayesScore(metric,database), new NNScore(metric))
-				relevanceFeedbackDemo(new NearestNeighbors(new NNBayesScore(metric,new BayesScore(metric,database), new NNScore(metric))), retriever, query, type, metric,
+				relevanceFeedbackDemo(new NearestNeighbors(new NNBayesScore(new BayesScore(metric,database), new NNScore(metric))), retriever, query, type, metric,
 						results);
 				currQuery++;
 			}
@@ -214,7 +214,7 @@ public class AutomatedRFTest {
 			//calculate deviations
 			for(int j = 0; j<numOfQueries; j++){
 				for(int k = 0; k<=numOfRFIterations; k++){
-					precisionDeviation[k] += Math.pow(QueryPrecision[j][k]-precision[k],2)/(double)numOfQueries;//refactor a*a
+					precisionDeviation[k] += Math.pow(QueryPrecision[j][k]-precision[k],2)/numOfQueries;//refactor a*a
 				}
 			}
 			
@@ -226,7 +226,7 @@ public class AutomatedRFTest {
 				Utils.printToFile(outputfile, "<p>Precision Deviation Iteration "+j+": "+precisionDeviation[j]+"</p>\n");
 			}
 			
-			avgRFTIME /= (double)(numOfRFIterations*numOfQueries);
+			avgRFTIME /= numOfRFIterations*numOfQueries;
 			
 			System.out.println("AVG RF Iteration Time: "+avgRFTIME+" ms");
 			Utils.printToFile(outputfile, "<p>AVG RF Time "+avgRFTIME+" ms</p>");

@@ -5,16 +5,13 @@ import java.util.List;
 
 import cbir.image.DescriptorType;
 import cbir.image.Image;
-import cbir.interfaces.Metric;
 
 public class NNBayesScore implements cbir.interfaces.Score{	
-	private Metric norm;
 	private BayesScore bayesScore;
 	private NNScore nnScore;
 	
-	public NNBayesScore(Metric metric, BayesScore bayesScore, NNScore nnScore){
+	public NNBayesScore(BayesScore bayesScore, NNScore nnScore){
 		super();
-		this.norm = metric;
 		this.bayesScore = bayesScore;
 		this.nnScore = nnScore;
 	}
