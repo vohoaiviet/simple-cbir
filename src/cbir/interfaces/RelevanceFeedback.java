@@ -3,7 +3,7 @@ package cbir.interfaces;
 import java.util.List;
 
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 /**
  * This is the Relevance Feedback Method interface.
  * @author Chris Wendler
@@ -21,6 +21,6 @@ public interface RelevanceFeedback {
 	 * @param resultAmount the number of desired results.
 	 * @return the results after considering the user feedback.
 	 */
-	public List<Image> relevanceFeedbackIteration(Retriever retriever, Image query, DescriptorType type, Metric metric, List<Image> positives, List<Image> negatives, int resultAmount); 
+	public List<ImageContainer> relevanceFeedbackIteration(Retriever retriever, ImageContainer query, DescriptorType type, Metric metric, List<ImageContainer> positives, List<ImageContainer> negatives, int resultAmount); 
 
 }

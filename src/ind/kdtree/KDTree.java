@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 import cbir.interfaces.Metric;
 
 /**
@@ -42,7 +42,7 @@ public class KDTree {
 	 * @param list
 	 *            List of images to construct the tree of.
 	 */
-	public KDTree(List<Image> list, int k, DescriptorType type) {
+	public KDTree(List<ImageContainer> list, int k, DescriptorType type) {
 		this.k = k;
 		this.type = type;
 		root = createNode(list, k, 0);
@@ -60,7 +60,7 @@ public class KDTree {
 	 *            Depth of the node.
 	 * @returns The root node of the created k-d-tree.
 	 */
-	public KDNode createNode(List<Image> list, int k, int depth) {
+	public KDNode createNode(List<ImageContainer> list, int k, int depth) {
 		// if list is empty return null as node
 		if (list == null || list.size() == 0) {
 			return null;
@@ -76,9 +76,9 @@ public class KDTree {
 		final int dim = depth % k;
 
 		// sort the list corresponding to the current axis
-		Collections.sort(list, new Comparator<Image>() {
+		Collections.sort(list, new Comparator<ImageContainer>() {
 			@Override
-			public int compare(Image arg0, Image arg1) {
+			public int compare(ImageContainer arg0, ImageContainer arg1) {
 				double[] descriptor0 = arg0.getDescriptor(type).getValues();
 				double[] descriptor1 = arg1.getDescriptor(type).getValues();
 				if (descriptor0[dim] < descriptor1[dim])
@@ -96,14 +96,14 @@ public class KDTree {
 		// split sorted list into 2 sublists and set subtrees recursively
 		if (list.size() > 0) {
 			if ((median - 1) >= 0) {
-				List<Image> less = list.subList(0, median);
+				List<ImageContainer> less = list.subList(0, median);
 				if (less.size() > 0) {
 					node.setLesser(createNode(less, k, depth + 1));
 					node.getLesser().setParent(node);
 				}
 			}
 			if ((median + 1) <= (list.size() - 1)) {
-				List<Image> more = list.subList(median + 1, list.size());
+				List<ImageContainer> more = list.subList(median + 1, list.size());
 				if (more.size() > 0) {
 					node.setGreater(createNode(more, k, depth + 1));
 					node.getGreater().setParent(node);
@@ -120,7 +120,7 @@ public class KDTree {
 	 *            Image to add to the tree.
 	 * @returns True if the image was successfully added.
 	 */
-	public boolean add(Image image) {
+	public boolean add(ImageContainer image) {
 		// if image is null return false
 		if (image == null) {
 			return false;
@@ -173,7 +173,7 @@ public class KDTree {
 	 *            Image to search for.
 	 * @returns True if the tree contains the image.
 	 */
-	public boolean contains(Image image) {
+	public boolean contains(ImageContainer image) {
 		if (image == null) {
 			return false;
 		}
@@ -191,7 +191,7 @@ public class KDTree {
 	 *            Image to be removed.
 	 * @returns True if the image was removed successfully.
 	 */
-	public boolean remove(Image image) {
+	public boolean remove(ImageContainer image) {
 
 		if (image == null) {
 			return false;
@@ -208,7 +208,7 @@ public class KDTree {
 		if (parent != null) {
 			if (parent.getLesser() != null && parent.getLesser().equals(node)) {
 				// node is lesser child
-				List<Image> nodes = getTree(node);
+				List<ImageContainer> nodes = getTree(node);
 				if (nodes.size() > 0) {
 					// build new tree at position of removed node
 					parent.setLesser(createNode(nodes, node.getK(),
@@ -224,7 +224,7 @@ public class KDTree {
 
 			} else {
 				// node is greater child
-				List<Image> nodes = getTree(node);
+				List<ImageContainer> nodes = getTree(node);
 				if (nodes.size() > 0) {
 					// build new tree at position of removed node
 					parent.setGreater(createNode(nodes, node.getK(),
@@ -240,7 +240,7 @@ public class KDTree {
 			}
 		} else {
 			// node is root
-			List<Image> nodes = getTree(node);
+			List<ImageContainer> nodes = getTree(node);
 			if (nodes.size() > 0) {
 				root = createNode(nodes, node.getK(), node.getDepth());
 			} else {
@@ -259,7 +259,7 @@ public class KDTree {
 	 *            Image to search for.
 	 * @returns Node which contains the image or null if not found.
 	 */
-	public KDNode getNode(KDTree tree, Image image) {
+	public KDNode getNode(KDTree tree, ImageContainer image) {
 		// return if tree is empty or image is null
 		if (tree == null || tree.root == null || image == null) {
 			return null;
@@ -301,8 +301,8 @@ public class KDTree {
 	 *            Root of the tree to get nodes for.
 	 * @returns A list of images of the subtree, root excluded.
 	 */
-	public List<Image> getTree(KDNode root) {
-		List<Image> list = new ArrayList<Image>();
+	public List<ImageContainer> getTree(KDNode root) {
+		List<ImageContainer> list = new ArrayList<ImageContainer>();
 		if (root.getLesser() != null) {
 			list.add(root.getLesser().getImage());
 			list.addAll(getTree(root.getLesser()));
@@ -328,7 +328,7 @@ public class KDTree {
 	 *            Descriptor type which is considered.
 	 * @returns A list of the num nearest neighbors, null if image is null.
 	 */
-	public List<Image> nearestNeighborSearch(int num, final Image image,
+	public List<ImageContainer> nearestNeighborSearch(int num, final ImageContainer image,
 			final Metric metric, final DescriptorType type) {
 
 		if (image == null)
@@ -338,8 +338,8 @@ public class KDTree {
 		TreeSet<KDNode> results = new TreeSet<KDNode>(new Comparator<KDNode>() {
 			@Override
 			public int compare(KDNode arg0, KDNode arg1) {
-				Image a = arg0.getImage();
-				Image b = arg1.getImage();
+				ImageContainer a = arg0.getImage();
+				ImageContainer b = arg1.getImage();
 				if (metric.distance(a, image, type) < metric.distance(b, image,
 						type))
 					return -1;
@@ -382,11 +382,11 @@ public class KDTree {
 		}
 
 		// Load up the collection of the results
-		Collection<Image> collection = new ArrayList<Image>(num);
+		Collection<ImageContainer> collection = new ArrayList<ImageContainer>(num);
 		for (KDNode KDNode : results) {
 			collection.add(KDNode.getImage());
 		}
-		return (List<Image>) collection;
+		return (List<ImageContainer>) collection;
 
 	}
 
@@ -404,7 +404,7 @@ public class KDTree {
 	 * search point to the current best.
 	 * 
 	 */
-	private static final void searchNode(Image image, KDNode node, int num,
+	private static final void searchNode(ImageContainer image, KDNode node, int num,
 			TreeSet<KDNode> results, Set<KDNode> examined, DescriptorType type,
 			Metric metric) {
 		// search for better results starting from the current node

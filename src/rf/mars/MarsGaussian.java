@@ -4,7 +4,7 @@ import java.util.List;
 
 import rf.Utility;
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 import cbir.interfaces.Metric;
 import cbir.interfaces.RelevanceFeedback;
 import cbir.interfaces.Retriever;
@@ -29,7 +29,7 @@ public class MarsGaussian implements RelevanceFeedback {
 	 *            the type of the descriptor which was used for the search
 	 * @return the weight matrix
 	 */
-	public double[] reweightFeatures(Image query, List<Image> positives,
+	public double[] reweightFeatures(ImageContainer query, List<ImageContainer> positives,
 			DescriptorType type) {
 		double[] means = Utility.calculateMeans(positives, type);
 		double[] deviations = Utility.calculateDeviations(positives, type,
@@ -56,9 +56,9 @@ public class MarsGaussian implements RelevanceFeedback {
 	 * @return the results after considering the user feedback.
 	 */
 	@Override
-	public List<Image> relevanceFeedbackIteration(Retriever retriever,
-			Image query, DescriptorType type, Metric metric, List<Image> positives,
-			List<Image> negatives, int resultAmount) {
+	public List<ImageContainer> relevanceFeedbackIteration(Retriever retriever,
+			ImageContainer query, DescriptorType type, Metric metric, List<ImageContainer> positives,
+			List<ImageContainer> negatives, int resultAmount) {
 		Utility.addImagesToList(query.getPositives(), positives);
 		Utility.addImagesToList(query.getNegatives(), negatives);
 		return new RetrieverDistanceBased(retriever.getDatabase(),new WeightedEuclidean(reweightFeatures(query, query.getPositives(), type))).search(query,

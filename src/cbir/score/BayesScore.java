@@ -5,7 +5,7 @@ import java.util.List;
 
 import rf.bayesian.Bayesian;
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 import cbir.interfaces.Metric;
 
 /**
@@ -15,16 +15,16 @@ import cbir.interfaces.Metric;
  */
 public class BayesScore implements cbir.interfaces.Score {
 	/** The image database. **/
-	private List<Image> database;
+	private List<ImageContainer> database;
 	/** The used distance metric in the score computation. **/
 	private Metric norm;
 	/** The Query Image after applying Bayesian Query Shifting. **/
-	private volatile Image BQS;
+	private volatile ImageContainer BQS;
 	/**
 	 * The Image in the database with the maximum distance to the BQS query
 	 * vector.
 	 **/
-	private volatile Image BQSmax;
+	private volatile ImageContainer BQSmax;
 	/**
 	 * A variable used to synchronize the usage of this scoring function in case
 	 * many threads compute the score at the same time.
@@ -39,7 +39,7 @@ public class BayesScore implements cbir.interfaces.Score {
 	 * @param database
 	 *            the list of images that is used as the database.
 	 */
-	public BayesScore(Metric metric, List<Image> database) {
+	public BayesScore(Metric metric, List<ImageContainer> database) {
 		super();
 		this.norm = metric;
 		this.database = database;
@@ -51,12 +51,12 @@ public class BayesScore implements cbir.interfaces.Score {
 	 * @param query
 	 * @param type
 	 */
-	public void init(final Image query, final DescriptorType type) {
+	public void init(final ImageContainer query, final DescriptorType type) {
 		BQS = new Bayesian().shiftQuery(query, type);
 		BQSmax = cbir.retriever.Utility.findNearestNeighbors(database, 1,
-				new Comparator<Image>() {
+				new Comparator<ImageContainer>() {
 					@Override
-					public int compare(Image a, Image b) {
+					public int compare(ImageContainer a, ImageContainer b) {
 						double distA = norm.distance(a, query, type);
 						double distB = norm.distance(b, query, type);
 						if (distA > distB)
@@ -75,7 +75,7 @@ public class BayesScore implements cbir.interfaces.Score {
 	 * @return the score of the image.
 	 */
 	@Override
-	public double score(final Image query, final Image image,
+	public double score(final ImageContainer query, final ImageContainer image,
 			final DescriptorType type) {
 		int knew = query.getPositives().size() + query.getNegatives().size();
 		synchronized (this) {

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 
 /**
  * This utility class implements all shared functions of the distance based and the score based retrievers.
@@ -26,10 +26,10 @@ public class Utility {
 	 * @param comparator the comparator which is used to compare images.
 	 * @return The list of the nearest neighbors.
 	 */
-	public static List<Image> findNearestNeighbors(List<Image> database, int amount, Comparator<Image> comparator) {
-		List<Image> results = new LinkedList<Image>();
-		TreeSet<Image> tree = new TreeSet<Image>(comparator);
-		for (Image curr : database) {
+	public static List<ImageContainer> findNearestNeighbors(List<ImageContainer> database, int amount, Comparator<ImageContainer> comparator) {
+		List<ImageContainer> results = new LinkedList<ImageContainer>();
+		TreeSet<ImageContainer> tree = new TreeSet<ImageContainer>(comparator);
+		for (ImageContainer curr : database) {
 			if (tree.size() <= amount) {
 				tree.add(curr);
 				continue;
@@ -66,7 +66,7 @@ public class Utility {
 	 * @param type the descriptortype is also printed.
 	 * @param filename the filename of the target file.
 	 */
-	public static void printResultListHTML(List<Image> results, DescriptorType type,
+	public static void printResultListHTML(List<ImageContainer> results, DescriptorType type,
 			String filename) {
 		try {
 			File file = new File(filename);
@@ -76,7 +76,7 @@ public class Utility {
 					+ " </h1>\n");
 			int i = 0;
 			out.write("<div>"+System.getProperty("line.separator"));
-			for (Image curr : results) {
+			for (ImageContainer curr : results) {
 				if(curr != null){
 					out.write("	<div style=\"float: left; padding-left: 5px; color: white; width:150px; height:150px; background:url("+toLinuxPath(curr.getFilename())+") no-repeat; background-size:100%;\"><b style=\"background-color: black;\">"+i+"</b></div>");
 					out.write(System.getProperty("line.separator"));
@@ -96,8 +96,8 @@ public class Utility {
 	 * @param filename of the image.
 	 * @return The image object with the given filename or null if not found.
 	 */
-	public static Image getImageByName(List<Image> database, String name) {
-		for (Image curr : database)
+	public static ImageContainer getImageByName(List<ImageContainer> database, String name) {
+		for (ImageContainer curr : database)
 			if (curr.getFilename().equals(name))
 				return curr;
 		return null;

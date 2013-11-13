@@ -3,7 +3,7 @@ package cbir.interfaces;
 import java.util.List;
 
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 /**
  * This is the Retriever interface.
  * 
@@ -17,7 +17,7 @@ public interface Retriever {
 	 * @param resultAmount the desired amount of results.
 	 * @return the best "resultAmount" results in a list.
 	 */
-	public List<Image> search(final Image query,
+	public List<ImageContainer> search(final ImageContainer query,
 			final DescriptorType type, int resultAmount);
 
 	/**
@@ -26,7 +26,7 @@ public interface Retriever {
 	 * @param type the descriptortype is also printed.
 	 * @param filename the filename of the target file.
 	 */
-	public void printResultListHTML(List<Image> results, DescriptorType type,
+	public void printResultListHTML(List<ImageContainer> results, DescriptorType type,
 			String filename);
 	
 	/**
@@ -34,11 +34,11 @@ public interface Retriever {
 	 * @param filename of the image.
 	 * @return The image object with the given filename or null if not found.
 	 */
-	public Image getImageByName(String name);
+	public ImageContainer getImageByName(String name);
 	
 	/**
 	 * A getter for the database.
 	 * @return a list of Images that describe the database.
 	 */
-	public List<Image> getDatabase();
+	public List<ImageContainer> getDatabase();
 }

@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 /**
  * This class provides a RFAssistant that is supposed to help the poor guy who has to evaluate
  * different relevance feedback mechanisms by hand. The RFAssistant maintains lists of positve images and
@@ -101,7 +101,7 @@ public class RFAssistant {
 	 * @param query the query image of which the marked positives/negatives should be stored.
 	 * @throws IOException is thrown if there is a problem with creating the file.
 	 */
-	public static void printQueryHits(String filename, Image query)
+	public static void printQueryHits(String filename, ImageContainer query)
 			throws IOException {
 		List<String> positives = new LinkedList<String>();
 		List<String> negatives = new LinkedList<String>();
@@ -111,10 +111,10 @@ public class RFAssistant {
 			positives = assi.getPositives();
 			negatives = assi.getNegatives();
 		}
-		for (Image curr : query.getPositives())
+		for (ImageContainer curr : query.getPositives())
 			if (!positives.contains(curr.getFilename()))
 				positives.add(curr.getFilename());
-		for (Image curr : query.getNegatives())
+		for (ImageContainer curr : query.getNegatives())
 			if (!negatives.contains(curr.getFilename()))
 				negatives.add(curr.getFilename());
 
@@ -135,11 +135,11 @@ public class RFAssistant {
 	 * @param positives
 	 * @param negatives
 	 */
-	public void revisePositivesAndNegatives(List<Image> positives, List<Image> negatives){
-		Iterator<Image> it = positives.iterator();
+	public void revisePositivesAndNegatives(List<ImageContainer> positives, List<ImageContainer> negatives){
+		Iterator<ImageContainer> it = positives.iterator();
 		int falsePositives = 0, falseNegatives = 0;
 		while(it.hasNext()){
-			Image curr = it.next();
+			ImageContainer curr = it.next();
 			if(this.negatives.contains(curr.getFilename())){
 				falsePositives++;
 				negatives.add(curr);
@@ -148,7 +148,7 @@ public class RFAssistant {
 		}
 		it = negatives.iterator();
 		while(it.hasNext()){
-			Image curr = it.next();
+			ImageContainer curr = it.next();
 			if(this.positives.contains(curr.getFilename())){
 				falseNegatives++;
 				positives.add(curr);

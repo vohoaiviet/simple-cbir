@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 import cbir.interfaces.Retriever;
 import cbir.interfaces.Score;
 
@@ -18,7 +18,7 @@ import cbir.interfaces.Score;
 
 public class RetrieverScoreBased implements Retriever {
 	/** The image database defined by a list of images. **/
-	private List<Image> database;
+	private List<ImageContainer> database;
 	/** The score function that is used to compare the images in the database. **/
 	private Score score;
 
@@ -26,7 +26,7 @@ public class RetrieverScoreBased implements Retriever {
 	 * @param database is a list of images describing an image database.
 	 * @param score determines which scoring function is used.
 	 */
-	public RetrieverScoreBased(List<Image> database, Score score) {
+	public RetrieverScoreBased(List<ImageContainer> database, Score score) {
 		this.database = database;
 		this.score = score;
 	}
@@ -38,12 +38,12 @@ public class RetrieverScoreBased implements Retriever {
 	 * @param amount the desired amount of nearest neighbors.
 	 * @return The list of the nearest neighbors.
 	 */
-	public List<Image> findNearestNeighbors(final Image image,
+	public List<ImageContainer> findNearestNeighbors(final ImageContainer image,
 			final DescriptorType type, int amount) {
 		return Utility.findNearestNeighbors(database, amount,
-				new Comparator<Image>() {
+				new Comparator<ImageContainer>() {
 					@Override
-					public int compare(Image a, Image b) {
+					public int compare(ImageContainer a, ImageContainer b) {
 						double scoreA = score.score(image, a, type);
 						double scoreB = score.score(image, b, type);
 						if (scoreA > scoreB)
@@ -62,7 +62,7 @@ public class RetrieverScoreBased implements Retriever {
 	 * @return the best "resultAmount" results in a list.
 	 */
 	@Override
-	public List<Image> search(final Image query, final DescriptorType type,
+	public List<ImageContainer> search(final ImageContainer query, final DescriptorType type,
 			int resultAmount) {
 		return findNearestNeighbors(query, type, resultAmount);
 	}
@@ -74,7 +74,7 @@ public class RetrieverScoreBased implements Retriever {
 	 * @param filename the filename of the target file.
 	 */
 	@Override
-	public void printResultListHTML(List<Image> results, DescriptorType type,
+	public void printResultListHTML(List<ImageContainer> results, DescriptorType type,
 			String filename) {
 		Utility.printResultListHTML(results, type, filename);
 	}
@@ -85,7 +85,7 @@ public class RetrieverScoreBased implements Retriever {
 	 * @return The image object with the given filename or null if not found.
 	 */
 	@Override
-	public Image getImageByName(String name) {
+	public ImageContainer getImageByName(String name) {
 		return Utility.getImageByName(database, name);
 	}
 
@@ -94,11 +94,11 @@ public class RetrieverScoreBased implements Retriever {
 	 * @return a list of Images that describe the database.
 	 */
 	@Override
-	public List<Image> getDatabase() {
+	public List<ImageContainer> getDatabase() {
 		return database;
 	}
 
-	public void setDatabase(List<Image> database) {
+	public void setDatabase(List<ImageContainer> database) {
 		this.database = database;
 	}
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import rf.Utility;
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 import cbir.interfaces.Metric;
 import cbir.interfaces.RelevanceFeedback;
 import cbir.interfaces.Retriever;
@@ -42,10 +42,10 @@ public class NearestNeighbors implements RelevanceFeedback {
 	 * @return the results after considering the user feedback.
 	 */
 	@Override
-	public List<Image> relevanceFeedbackIteration(Retriever retriever,
-			Image query, DescriptorType type, Metric metric,
-			List<Image> positives, List<Image> negatives, int resultAmount) {	
-		List<Image> results;
+	public List<ImageContainer> relevanceFeedbackIteration(Retriever retriever,
+			ImageContainer query, DescriptorType type, Metric metric,
+			List<ImageContainer> positives, List<ImageContainer> negatives, int resultAmount) {	
+		List<ImageContainer> results;
 		Utility.addImagesToList(query.getPositives(), positives);
 		Utility.addImagesToList(query.getNegatives(), negatives);
 		

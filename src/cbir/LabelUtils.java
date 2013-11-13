@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 
 /**
  * An util class for labelling.
@@ -20,10 +20,10 @@ public class LabelUtils {
 	 * @param database
 	 *            database to be labelled
 	 */
-	public static void labelDatabase(List<Image> database) {
-		Iterator<Image> it = database.iterator();
+	public static void labelDatabase(List<ImageContainer> database) {
+		Iterator<ImageContainer> it = database.iterator();
 		while (it.hasNext()) {
-			Image temp = it.next();
+			ImageContainer temp = it.next();
 			String[] filename = temp.getFilename().split(Pattern.quote("\\"));
 			// get last sub-folder
 			String label = filename[filename.length - 2];

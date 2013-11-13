@@ -7,7 +7,7 @@ import java.util.List;
 import org.dom4j.DocumentException;
 
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 
 /**
  * A simple testing class for XML reader. "file" specifies the path of the XML
@@ -29,12 +29,12 @@ public class XMLReaderTest {
 			e.printStackTrace();
 		}
 		// get list of parsed images
-		List<Image> imageList = reader.getImageList();
+		List<ImageContainer> imageList = reader.getImageList();
 		// print list
 		System.out.println("test");
-		Iterator<Image> it = imageList.iterator();
+		Iterator<ImageContainer> it = imageList.iterator();
 		while (it.hasNext()) {
-			Image temp = it.next();
+			ImageContainer temp = it.next();
 			System.out.println("Image: " + temp.getFilename());
 			double[] edgeHisto = temp.getDescriptor(DescriptorType.MPEG_EHD)
 					.getValues();

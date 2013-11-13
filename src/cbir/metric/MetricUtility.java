@@ -3,7 +3,7 @@ package cbir.metric;
 import java.util.List;
 
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 
 /**
  * Provides a function which initializes weights for the merged descriptor. Used
@@ -24,7 +24,7 @@ public class MetricUtility {
 	 * @param type
 	 *            The descriptor type used.
 	 */
-	public static double[] initializeWeights(Image query, DescriptorType type) {
+	public static double[] initializeWeights(ImageContainer query, DescriptorType type) {
 		double[] weights = new double[query.getDescriptor(type).getValues().length];
 		if (type == DescriptorType.MERGED) {
 			List<DescriptorType> types = query.getOrder();

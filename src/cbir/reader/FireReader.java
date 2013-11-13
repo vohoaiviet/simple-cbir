@@ -13,7 +13,7 @@ import java.util.zip.GZIPInputStream;
 import cbir.Utils;
 import cbir.image.Descriptor;
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 /**
  * A very simple reader that is able to read histograms of the given format:
  * + (optional) The histograms can contain a delimiter "counter" followed by one double value, if the "counter"
@@ -34,9 +34,9 @@ public class FireReader {
 	 * @param type the type determines where the descriptors get stored in the image data-structure.
 	 * @throws IOException when a descriptor file is not found.
 	 */
-	public void readDescriptors(List<Image> images,DescriptorType type) throws IOException{
+	public void readDescriptors(List<ImageContainer> images,DescriptorType type) throws IOException{
 		String suffix = Utils.getSuffix(type);
-		for(Image curr: images)
+		for(ImageContainer curr: images)
 			curr.addDescriptor(readDescriptorFile(curr.getFilename()+suffix,type));
 	}
 	

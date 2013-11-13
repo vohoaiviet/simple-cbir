@@ -1,7 +1,7 @@
 package cbir.metric;
 
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 import cbir.interfaces.Metric;
 
 /**
@@ -24,7 +24,7 @@ public class Manhattan implements Metric {
 	 * 			The descriptor type of the image descriptors.
 	 * @returns the distance between image a and image b.
 	 */
-	public double distance(Image a, Image b, DescriptorType type) {
+	public double distance(ImageContainer a, ImageContainer b, DescriptorType type) {
 		double dist = 0;
 		for (int i = 0; i < a.getDescriptor(type).getValues().length; i++)
 			dist += Math.abs(a.getDescriptor(type).getValues()[i]

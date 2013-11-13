@@ -3,7 +3,7 @@ package cbir.retriever;
 import java.util.Comparator;
 
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 import cbir.interfaces.Metric;
 /**
  * This comparator uses distances to a given query image 
@@ -12,9 +12,9 @@ import cbir.interfaces.Metric;
  * @author Chris Wendler
  *
  */
-public class ComparatorDistanceBased implements Comparator<Image> {
+public class ComparatorDistanceBased implements Comparator<ImageContainer> {
 	/** Relative to this image all distances get computed. **/
-	private Image image;
+	private ImageContainer image;
 	/** The metric that is used to compute a distance. **/
 	private Metric metric;
 	/** The discriptortype of interest.**/
@@ -26,14 +26,14 @@ public class ComparatorDistanceBased implements Comparator<Image> {
 	 * @param metric the metric is used to calculate distancs.
 	 * @param type is the descriptortype of interest.
 	 */
-	public ComparatorDistanceBased(Image image, Metric metric, DescriptorType type) {
+	public ComparatorDistanceBased(ImageContainer image, Metric metric, DescriptorType type) {
 		this.image = image;
 		this.metric = metric;
 		this.type = type;
 	}
 
 	@Override
-	public int compare(Image a, Image b) {
+	public int compare(ImageContainer a, ImageContainer b) {
 		double distA = metric.distance(a, image, type);
 		double distB = metric.distance(b, image, type);
 		if (distA < distB)

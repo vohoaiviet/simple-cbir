@@ -4,7 +4,7 @@ import java.util.List;
 import rf.Utility;
 import cbir.image.Descriptor;
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 import cbir.interfaces.Metric;
 import cbir.interfaces.RelevanceFeedback;
 import cbir.interfaces.Retriever;
@@ -56,8 +56,8 @@ public class Bayesian implements RelevanceFeedback {
 	 * @param type is the descriptor type which is considered for the calculation.
 	 * @return the calculated value for scatter within.
 	 */
-	private double calculateScatterWithin(List<Image> positives,
-			List<Image> negatives, double[] expectationsRelevant,
+	private double calculateScatterWithin(List<ImageContainer> positives,
+			List<ImageContainer> negatives, double[] expectationsRelevant,
 			double[] expectationsIrrelevant, DescriptorType type) {
 		int NN = negatives.size();
 		int NR = positives.size();
@@ -67,7 +67,7 @@ public class Bayesian implements RelevanceFeedback {
 		double deviationRelevant = 0;
 		double deviationIrrelevant = 0;
 		
-		for (Image curr : positives) {
+		for (ImageContainer curr : positives) {
 			for (int i = 0; i < length; i++) {
 				deviationRelevant += Math.pow(curr.getDescriptor(type)
 						.getValues()[i] - expectationRelevant[i], 2);
@@ -78,7 +78,7 @@ public class Bayesian implements RelevanceFeedback {
 		else
 			deviationRelevant = 0;
 
-		for (Image curr : negatives) {
+		for (ImageContainer curr : negatives) {
 			for (int i = 0; i < length; i++) {
 				deviationIrrelevant += Math.pow(curr.getDescriptor(type)
 						.getValues()[i] - expectationIrrelevant[i], 2);
@@ -124,19 +124,19 @@ public class Bayesian implements RelevanceFeedback {
 	 * @param type is the descriptor type which is considered for the calculation.
 	 * @return an approximation for the variance.
 	 */
-	private double calculateAverageVariance(List<Image> positives,
-			List<Image> negatives, double[] expectationsRelevant,
+	private double calculateAverageVariance(List<ImageContainer> positives,
+			List<ImageContainer> negatives, double[] expectationsRelevant,
 			double[] expectationsIrrelevant, DescriptorType type) {
 		double result = 0;
 		int length = expectationsRelevant.length;
 		int NN = negatives.size();
 		int NR = positives.size();
 		int N = NN + NR;
-		for(Image curr: positives){
+		for(ImageContainer curr: positives){
 			for(int i = 0; i<length; i++)
 				result += Math.pow(curr.getDescriptor(type).getValues()[i]-expectationsRelevant[i],2);
 		}
-		for(Image curr: negatives){
+		for(ImageContainer curr: negatives){
 			for(int i = 0; i<length; i++)
 				result += Math.pow(curr.getDescriptor(type).getValues()[i]-expectationsIrrelevant[i],2);
 		}
@@ -151,7 +151,7 @@ public class Bayesian implements RelevanceFeedback {
 	 * @param type the type of descriptor which has to be considered.
 	 * @return The new (shifted) query image is returned.
 	 */
-	public Image shiftQuery(Image query,
+	public ImageContainer shiftQuery(ImageContainer query,
 			DescriptorType type) {
 		int NN = query.getNegatives().size();
 		int NR = query.getPositives().size();
@@ -206,9 +206,9 @@ public class Bayesian implements RelevanceFeedback {
 	 * @return the results after considering the user feedback.
 	 */
 	@Override
-	public List<Image> relevanceFeedbackIteration(Retriever retriever,
-			Image query, DescriptorType type, Metric metric,
-			List<Image> positives, List<Image> negatives, int resultAmount) {
+	public List<ImageContainer> relevanceFeedbackIteration(Retriever retriever,
+			ImageContainer query, DescriptorType type, Metric metric,
+			List<ImageContainer> positives, List<ImageContainer> negatives, int resultAmount) {
 		Utility.addImagesToList(query.getPositives(), positives);
 		Utility.addImagesToList(query.getNegatives(), negatives);
 		int NN = query.getNegatives().size();

@@ -21,16 +21,16 @@ import cbir.Utils;
  * @author Chris Wendler
  * 
  */
-public class Image implements Serializable {
+public class ImageContainer implements Serializable {
 	private static final long serialVersionUID = -3920208288841347100L;
 	/** The path of the image. */
 	private final String filename;
 	/** A hash map of the descriptors of the image. */
 	private HashMap<DescriptorType, Descriptor> descriptors;
 	/** List of positive images marked during RF */
-	private List<Image> positives = new LinkedList<Image>();
+	private List<ImageContainer> positives = new LinkedList<ImageContainer>();
 	/** List of negative images marked during RF */
-	private List<Image> negatives = new LinkedList<Image>();
+	private List<ImageContainer> negatives = new LinkedList<ImageContainer>();
 	/** Label of a image when annotated databases are used */
 	private String label = null;
 	/**
@@ -42,7 +42,7 @@ public class Image implements Serializable {
 	/**
 	 * Constructor of the Image class. Adds descriptors if specified.
 	 */
-	public Image(String filename, Descriptor... histograms) {
+	public ImageContainer(String filename, Descriptor... histograms) {
 		super();
 		this.filename = filename;
 		descriptors = new HashMap<DescriptorType, Descriptor>();
@@ -79,7 +79,7 @@ public class Image implements Serializable {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	public Image deepCopy() throws IOException, ClassNotFoundException {
+	public ImageContainer deepCopy() throws IOException, ClassNotFoundException {
 		// ObjectOutputStream erzeugen
 		ByteArrayOutputStream bufOutStream = new ByteArrayOutputStream();
 		ObjectOutputStream outStream = new ObjectOutputStream(bufOutStream);
@@ -92,7 +92,7 @@ public class Image implements Serializable {
 		ByteArrayInputStream bufInStream = new ByteArrayInputStream(buffer);
 		ObjectInputStream inStream = new ObjectInputStream(bufInStream);
 		// Objekt wieder auslesen
-		Image deepCopy = (Image) inStream.readObject();
+		ImageContainer deepCopy = (ImageContainer) inStream.readObject();
 		return deepCopy;
 	}
 
@@ -120,19 +120,19 @@ public class Image implements Serializable {
 		this.order = order;
 	}
 
-	public List<Image> getPositives() {
+	public List<ImageContainer> getPositives() {
 		return positives;
 	}
 
-	public void setPositives(List<Image> positives) {
+	public void setPositives(List<ImageContainer> positives) {
 		this.positives = positives;
 	}
 
-	public List<Image> getNegatives() {
+	public List<ImageContainer> getNegatives() {
 		return negatives;
 	}
 
-	public void setNegatives(List<Image> negatives) {
+	public void setNegatives(List<ImageContainer> negatives) {
 		this.negatives = negatives;
 	}
 

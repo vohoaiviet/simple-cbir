@@ -5,7 +5,7 @@ import java.util.List;
 import rf.Utility;
 import cbir.image.Descriptor;
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 import cbir.interfaces.Metric;
 import cbir.interfaces.RelevanceFeedback;
 import cbir.interfaces.Retriever;
@@ -58,8 +58,8 @@ public class MarsIDF implements RelevanceFeedback {
 	 *            the type of the descriptor which was used for search
 	 * @return the image containing the moved query vector
 	 */
-	public Image learnQueryVector(Image query, List<Image> positives,
-			List<Image> negatives, DescriptorType type) {
+	public ImageContainer learnQueryVector(ImageContainer query, List<ImageContainer> positives,
+			List<ImageContainer> negatives, DescriptorType type) {
 		int length = query.getDescriptor(type).getValues().length;
 		double[] movedQuery = query.getDescriptor(type).getValues();
 		double[] meanPositives;
@@ -95,15 +95,15 @@ public class MarsIDF implements RelevanceFeedback {
 	 * @return the results after considering the user feedback.
 	 */
 	@Override
-	public List<Image> relevanceFeedbackIteration(Retriever retriever,
-			Image query, DescriptorType type, Metric metric, List<Image> positives,
-			List<Image> negatives, int resultAmount) {
+	public List<ImageContainer> relevanceFeedbackIteration(Retriever retriever,
+			ImageContainer query, DescriptorType type, Metric metric, List<ImageContainer> positives,
+			List<ImageContainer> negatives, int resultAmount) {
 		Utility.addImagesToList(query.getPositives(), positives);
 		Utility.addImagesToList(query.getNegatives(), negatives);
 		
 	
 		query = learnQueryVector(query, query.getPositives(), query.getNegatives(), type);
-		List<Image> results = retriever.search(query,
+		List<ImageContainer> results = retriever.search(query,
 				type, resultAmount);
 
 		return results;

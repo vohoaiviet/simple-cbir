@@ -1,7 +1,7 @@
 package ind.kdtree;
 
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 
 /**
  * Implements a node of a k-d-tree. Every node has a point (image), a dimension
@@ -19,7 +19,7 @@ public class KDNode implements Comparable<KDNode> {
 	/** The depth of the node point. */
 	private int depth;
 	/** The image which is contained in the node. */
-	private Image image = null;
+	private ImageContainer image = null;
 	/** The descriptor type of the node descriptor. */
 	private DescriptorType type;
 	/** The parent node. */
@@ -32,7 +32,7 @@ public class KDNode implements Comparable<KDNode> {
 	/**
 	 * Constructor of KDNode.
 	 */
-	public KDNode(Image image) {
+	public KDNode(ImageContainer image) {
 		super();
 		this.image = image;
 	}
@@ -40,7 +40,7 @@ public class KDNode implements Comparable<KDNode> {
 	/**
 	 * Constructor of KDNode.
 	 */
-	public KDNode(int dim, int depth, Image image, DescriptorType type) {
+	public KDNode(int dim, int depth, ImageContainer image, DescriptorType type) {
 		this(image);
 		this.k = dim;
 		this.depth = depth;
@@ -63,7 +63,7 @@ public class KDNode implements Comparable<KDNode> {
 	 *            The descriptor type used.
 	 * @return
 	 */
-	public static int compareTo(int depth, int k, Image image1, Image image2,
+	public static int compareTo(int depth, int k, ImageContainer image1, ImageContainer image2,
 			DescriptorType type) {
 		int dim = depth % k;
 		double[] descriptor1 = image1.getDescriptor(type).getValues();
@@ -119,11 +119,11 @@ public class KDNode implements Comparable<KDNode> {
 		this.depth = depth;
 	}
 
-	public Image getImage() {
+	public ImageContainer getImage() {
 		return image;
 	}
 
-	public void setImage(Image image) {
+	public void setImage(ImageContainer image) {
 		this.image = image;
 	}
 

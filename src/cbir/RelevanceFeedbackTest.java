@@ -14,7 +14,7 @@ import rf.Utility;
 import rf.Utility.Normalization;
 import rf.bayesian.Bayesian;
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 import cbir.interfaces.Metric;
 import cbir.interfaces.RelevanceFeedback;
 import cbir.metric.WeightedEuclidean;
@@ -89,10 +89,10 @@ public class RelevanceFeedbackTest {
 	 *            the result list of the previous iteration.
 	 */
 	public static void relevanceFeedbackDemo(RelevanceFeedback rf,
-			RetrieverDistanceBased retriever, Image query, DescriptorType type,
-			Metric metric, List<Image> result) {
-		List<Image> positives;
-		List<Image> negatives;
+			RetrieverDistanceBased retriever, ImageContainer query, DescriptorType type,
+			Metric metric, List<ImageContainer> result) {
+		List<ImageContainer> positives;
+		List<ImageContainer> negatives;
 		BufferedReader stdin = new BufferedReader(new InputStreamReader(
 				System.in));
 		String relevant = null, irrelevant = null;
@@ -123,8 +123,8 @@ public class RelevanceFeedbackTest {
 
 				String[] indicesRelevant = relevant.split(" ");
 				String[] indicesIrrelevant = irrelevant.split(" ");
-				positives = new LinkedList<Image>();
-				negatives = new LinkedList<Image>();
+				positives = new LinkedList<ImageContainer>();
+				negatives = new LinkedList<ImageContainer>();
 				int i = 0;
 				if (indicesRelevant[0].equals("assist")) {
 					rfassi = RFAssistant.createRFAssistant(resultFolder
@@ -134,7 +134,7 @@ public class RelevanceFeedbackTest {
 
 				// get positives
 				if (relevant.equals("all")) {
-					for (Image curr : result)
+					for (ImageContainer curr : result)
 						positives.add(curr);
 				} else {
 					for (; i < indicesRelevant.length; i++)
@@ -150,7 +150,7 @@ public class RelevanceFeedbackTest {
 
 				// get negatives
 				if (irrelevant.equals("others")) {
-					for (Image curr : result)
+					for (ImageContainer curr : result)
 						if (positives.contains(curr))
 							continue;
 						else
@@ -202,7 +202,7 @@ public class RelevanceFeedbackTest {
 			long starttime, endtime;
 			starttime = System.currentTimeMillis();
 
-			List<Image> database = new XMLReader().parseXMLFile(xml_path);
+			List<ImageContainer> database = new XMLReader().parseXMLFile(xml_path);
 
 			LabelUtils.labelDatabase(database);
 			new FireReader().readDescriptors(database,
@@ -240,7 +240,7 @@ public class RelevanceFeedbackTest {
 					+ (endtime - starttime) + " ms.</p>");
 			starttime = endtime;
 
-			List<Image> queries = new LinkedList<Image>();
+			List<ImageContainer> queries = new LinkedList<ImageContainer>();
 			try {
 				for(int i = 0; i < queryAmount; i++){
 					Random rand = new Random();
@@ -250,9 +250,9 @@ public class RelevanceFeedbackTest {
 				e.printStackTrace();
 			}
 
-			for (Image query : queries) {
+			for (ImageContainer query : queries) {
 				starttime = System.currentTimeMillis();
-				List<Image> results = retriever.search(query, type, 20);
+				List<ImageContainer> results = retriever.search(query, type, 20);
 				retriever.printResultListHTML(results, type, outputfile);
 				endtime = System.currentTimeMillis();
 				Utils.printToFile(outputfile, "<p> query: "

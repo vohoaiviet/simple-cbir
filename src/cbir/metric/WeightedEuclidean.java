@@ -2,7 +2,7 @@ package cbir.metric;
 
 import cbir.image.Descriptor;
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 import cbir.interfaces.Metric;
 
 /**
@@ -42,7 +42,7 @@ public class WeightedEuclidean implements Metric {
 	 * 			The descriptor type of the image descriptors.
 	 * @returns the distance between image a and image b.
 	 */
-	public double distance(Image a, Image b, DescriptorType type) {
+	public double distance(ImageContainer a, ImageContainer b, DescriptorType type) {
 		if (weights == null)
 			if (type == DescriptorType.MERGED)
 				initializeWeights(a, type);
@@ -97,7 +97,7 @@ public class WeightedEuclidean implements Metric {
 	 * @param type
 	 *            The descriptor type used.
 	 */
-	public void initializeWeights(Image query, DescriptorType type) {
+	public void initializeWeights(ImageContainer query, DescriptorType type) {
 		this.weights = MetricUtility.initializeWeights(query, type);
 	}
 

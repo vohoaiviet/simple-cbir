@@ -1,7 +1,7 @@
 package cbir.interfaces;
 
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 /**
  * This is the Score interface. 
  * @author Chris Wendler
@@ -15,5 +15,5 @@ public interface Score {
 	 * @param type the type of descriptor which is considered in the score computation.
 	 * @return the score of the image.
 	 */
-	public double score(Image query, final Image image, final DescriptorType type);
+	public double score(ImageContainer query, final ImageContainer image, final DescriptorType type);
 }

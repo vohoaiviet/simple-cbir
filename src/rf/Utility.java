@@ -4,7 +4,7 @@ import java.util.List;
 
 import cbir.Utils;
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 /**
  * This is a Utility class for all RF methods and provides methods to normalize descriptors
  * to calculate mean, variance and standard deviation and so on.
@@ -33,7 +33,7 @@ public class Utility {
 	 * JUSTUS: normalizes the descriptors by dividing each entry by the corresponding variance.
 	 * IDF: denotes the inverse document frequency normalization for images. 
 	 */
-	public static void normalizeDescriptors(List<Image> database, DescriptorType descriptorOfInterest, Normalization type){
+	public static void normalizeDescriptors(List<ImageContainer> database, DescriptorType descriptorOfInterest, Normalization type){
 		double [] means = calculateMeans(database, descriptorOfInterest);
 		double [] deviations;
 
@@ -65,8 +65,8 @@ public class Utility {
 	 * @param means the means of the different features in the database.
 	 * @param variance the variances of the different features in the database.
 	 */
-	public static void normalizeDescriptorsJustus(List<Image> database, DescriptorType descriptorOfInterest, double [] means, double [] variance){
-		for(Image curr: database){
+	public static void normalizeDescriptorsJustus(List<ImageContainer> database, DescriptorType descriptorOfInterest, double [] means, double [] variance){
+		for(ImageContainer curr: database){
 			double [] descriptor = curr.getDescriptor(descriptorOfInterest).getValues();
 			for(int i = 0; i<descriptor.length; i++){
 				if(variance[i]!=0)
@@ -85,8 +85,8 @@ public class Utility {
 	 * @param means the means of the different features in the database.
 	 * @param deviations the standard deviations of the different features in the database.
 	 */
-	public static void normalizeDescriptors(List<Image> database, DescriptorType descriptorOfInterest, double [] means, double [] deviations){
-		for(Image curr: database){
+	public static void normalizeDescriptors(List<ImageContainer> database, DescriptorType descriptorOfInterest, double [] means, double [] deviations){
+		for(ImageContainer curr: database){
 			double [] descriptor = curr.getDescriptor(descriptorOfInterest).getValues();
 			for(int i = 0; i<descriptor.length; i++){
 				if(deviations[i]!=0)
@@ -105,9 +105,9 @@ public class Utility {
 	 * @param means the means of the different features in the database.
 	 * @param deviations the standard deviations of the different features in the database.
 	 */
-	public static void normalizeDescriptorsPositive(List<Image> database, DescriptorType descriptorOfInterest, double [] means, double [] deviations){
+	public static void normalizeDescriptorsPositive(List<ImageContainer> database, DescriptorType descriptorOfInterest, double [] means, double [] deviations){
 		normalizeDescriptors(database,descriptorOfInterest,means,deviations);
-		for(Image curr: database){
+		for(ImageContainer curr: database){
 			double [] descriptor = curr.getDescriptor(descriptorOfInterest).getValues();
 			for(int i = 0; i<descriptor.length; i++)
 				descriptor[i] = (descriptor[i]+1.d)/2.d;
@@ -125,8 +125,8 @@ public class Utility {
 	 * @param means the means of the different features in the database.
 	 * @param deviations the standard deviations of the different features in the database.
 	 */
-	public static void convertToWeights(List<Image> database, DescriptorType descriptorOfInterest, double [] means, double [] deviations) {
-		for (Image curr : database) {
+	public static void convertToWeights(List<ImageContainer> database, DescriptorType descriptorOfInterest, double [] means, double [] deviations) {
+		for (ImageContainer curr : database) {
 			double[] descriptor = curr.getDescriptor(descriptorOfInterest)
 					.getValues();
 			for (int i = 0; i < descriptor.length; i++) {
@@ -146,9 +146,9 @@ public class Utility {
 	 * @param descriptorOfInterest the descriptortype of interest.
 	 * @return the array of means of the different features.
 	 */
-	public static double[] calculateMeans(List<Image> database, DescriptorType descriptorOfInterest){
+	public static double[] calculateMeans(List<ImageContainer> database, DescriptorType descriptorOfInterest){
 		double [] means = new double[database.get(0).getDescriptor(descriptorOfInterest).getValues().length];
-		for(Image curr: database){
+		for(ImageContainer curr: database){
 			double [] descriptor = curr.getDescriptor(descriptorOfInterest).getValues();
 			for(int i = 0; i<descriptor.length; i++){
 				means[i] += descriptor[i];
@@ -167,9 +167,9 @@ public class Utility {
 	 * @param means the array of means which is necessary for the computation of deviations.
 	 * @return the array of deviations of the different features.
 	 */
-	public static double[] calculateDeviations(List<Image> database, DescriptorType descriptorOfInterest, double [] means){
+	public static double[] calculateDeviations(List<ImageContainer> database, DescriptorType descriptorOfInterest, double [] means){
 		double [] deviations = new double[means.length];
-		for(Image curr: database){
+		for(ImageContainer curr: database){
 			double [] descriptor = curr.getDescriptor(descriptorOfInterest).getValues();
 			for(int i = 0; i<descriptor.length; i++){
 				deviations[i] += Math.pow(descriptor[i]-means[i],2);//refactor a*a
@@ -189,9 +189,9 @@ public class Utility {
 	 * @param means the array of means which is necessary for the computation of deviations.
 	 * @return the array of variances of the different features.
 	 */
-	public static double[] calculateVariance(List<Image> database, DescriptorType descriptorOfInterest, double [] means){
+	public static double[] calculateVariance(List<ImageContainer> database, DescriptorType descriptorOfInterest, double [] means){
 		double [] deviations = new double[means.length];
-		for(Image curr: database){
+		for(ImageContainer curr: database){
 			double [] descriptor = curr.getDescriptor(descriptorOfInterest).getValues();
 			for(int i = 0; i<descriptor.length; i++){
 				deviations[i] += Math.pow(descriptor[i]-means[i],2);//refactor a*a
@@ -209,8 +209,8 @@ public class Utility {
 	 * @param list the list where the new images should be added.
 	 * @param toAdd the list of images that should be added.
 	 */
-	public static void addImagesToList(List<Image> list, List<Image> toAdd){
-		for(Image curr: toAdd)
+	public static void addImagesToList(List<ImageContainer> list, List<ImageContainer> toAdd){
+		for(ImageContainer curr: toAdd)
 			if(!list.contains(curr))
 				list.add(curr);
 	}

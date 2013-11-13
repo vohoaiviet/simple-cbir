@@ -12,7 +12,7 @@ import org.dom4j.io.SAXReader;
 
 import cbir.image.Descriptor;
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 
 /**
  * A class which reads the name of an image and its descriptors from a given XML
@@ -23,7 +23,7 @@ import cbir.image.Image;
  */
 public class XMLReader {
 	/** The image list that will be returned. */
-	private final List<Image> imageList = new LinkedList<Image>();
+	private final List<ImageContainer> imageList = new LinkedList<ImageContainer>();
 
 	/**
 	 * Parses image information from a given XML file and returns a list of
@@ -35,7 +35,7 @@ public class XMLReader {
 	 * @returns a list of images with their descriptors.
 	 * @throws DocumentException
 	 */
-	public List<Image> parseXMLFile(File file) throws DocumentException {
+	public List<ImageContainer> parseXMLFile(File file) throws DocumentException {
 
 		// Read XML file
 		SAXReader reader = new SAXReader();
@@ -74,7 +74,7 @@ public class XMLReader {
 					}
 
 					// construct Image and save in list
-					Image image = new Image(filename,
+					ImageContainer image = new ImageContainer(filename,
 							descriptors.toArray(new Descriptor[descriptors
 									.size()]));
 					imageList.add(image);
@@ -85,7 +85,7 @@ public class XMLReader {
 
 	}
 
-	public List<Image> getImageList() {
+	public List<ImageContainer> getImageList() {
 		return imageList;
 	}
 

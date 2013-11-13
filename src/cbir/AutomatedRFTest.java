@@ -13,7 +13,7 @@ import rf.Utility;
 import rf.Utility.Normalization;
 import rf.bayesian.Bayesian;
 import cbir.image.DescriptorType;
-import cbir.image.Image;
+import cbir.image.ImageContainer;
 import cbir.interfaces.Metric;
 import cbir.interfaces.RelevanceFeedback;
 import cbir.metric.WeightedEuclidean;
@@ -99,8 +99,8 @@ public class AutomatedRFTest {
 	 *            the result list of the previous iteration.
 	 */
 	public static void relevanceFeedbackDemo(RelevanceFeedback rf,
-			RetrieverDistanceBased retriever, Image query, DescriptorType type,
-			Metric metric, List<Image> result) {
+			RetrieverDistanceBased retriever, ImageContainer query, DescriptorType type,
+			Metric metric, List<ImageContainer> result) {
 
 		int j = 0;
 		while (true) {
@@ -108,8 +108,8 @@ public class AutomatedRFTest {
 
 			StringBuilder relevant = new StringBuilder();
 			StringBuilder irrelevant = new StringBuilder();
-			LinkedList<Image> positives = new LinkedList<Image>();
-			LinkedList<Image> negatives = new LinkedList<Image>();
+			LinkedList<ImageContainer> positives = new LinkedList<ImageContainer>();
+			LinkedList<ImageContainer> negatives = new LinkedList<ImageContainer>();
 
 			for (int i = 0; i < numOfResults; i++) {
 				// if labels are equal mark as positive, else negative
@@ -169,7 +169,7 @@ public class AutomatedRFTest {
 			starttime = System.currentTimeMillis();
 
 			System.out.println("Reading and labelling databases...");
-			List<Image> database = new XMLReader().parseXMLFile(xml_path);
+			List<ImageContainer> database = new XMLReader().parseXMLFile(xml_path);
 			// set labels of images
 			LabelUtils.labelDatabase(database);
 			new FireReader().readDescriptors(database,
@@ -207,7 +207,7 @@ public class AutomatedRFTest {
 					+ (endtime - starttime) + " ms.</p>");
 			starttime = endtime;
 
-			List<Image> queries = new LinkedList<Image>();
+			List<ImageContainer> queries = new LinkedList<ImageContainer>();
 			if(!newRandoms)
 				randomQueryIndices = Utils.readIntListFromFile(randomIndicesFile);
 			// make random queries
@@ -224,10 +224,10 @@ public class AutomatedRFTest {
 				}
 			}
 
-			for (Image query : queries) {
+			for (ImageContainer query : queries) {
 				System.out.println("Query " + currQuery + "...");
 				starttime = System.currentTimeMillis();
-				List<Image> results = retriever.search(query, type,
+				List<ImageContainer> results = retriever.search(query, type,
 						numOfResults);
 				retriever.printResultListHTML(results, type, outputfile);
 				endtime = System.currentTimeMillis();
