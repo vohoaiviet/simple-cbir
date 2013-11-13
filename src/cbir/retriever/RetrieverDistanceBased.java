@@ -2,7 +2,6 @@ package cbir.retriever;
 
 import ind.kdtree.KDTree;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,21 +11,24 @@ import cbir.interfaces.Metric;
 import cbir.interfaces.Retriever;
 
 /**
- * Class that realizes a query.
- * 
- * @author chris
+ * A Retriever that uses a distance function for the ranking.
+ * @author Chris Wendler
  * 
  */
 public class RetrieverDistanceBased implements Retriever{
+	/** The image database defined by a list of images. **/
 	private List<Image> database;
+	/** The distance function that is used to compare the images in the database. **/
 	private Metric metric;
+	/** This hashmap contains the indexstructures for their corresponding descriptortypes. **/
 	private final HashMap<DescriptorType, KDTree> trees;
 
 	/**
-	 * @param database
-	 * @param types indicate for which descriptors, index structures should get formed
+	 * @param database is a list of images describing an image database.
+	 * @param metric determines which distance function is used.
+	 * @param types denote for which descriptortypes index structures should be generated.
 	 */
-	public RetrieverDistanceBased(List<Image> database, Metric metric, DescriptorType... types) {
+	public RetrieverDistanceBased(List<Image> database, Metric metric, DescriptorType ... types) {
 		this.database = database;
 		this.metric = metric;
 		this.trees = new HashMap<DescriptorType, KDTree>();
@@ -37,65 +39,60 @@ public class RetrieverDistanceBased implements Retriever{
 		}
 	}
 
+	/**
+	 * Finds the "amount" nearest neighbors of the given image.
+	 * @param image the query image.
+	 * @param type the descriptor type of interest.
+	 * @param amount the desired amount of nearest neighbors.
+	 * @return The list of the nearest neighbors.
+	 */
 	public List<Image> findNearestNeighbors(final Image image,
 			final DescriptorType type, int amount) {
 		return Utility.findNearestNeighbors(database,amount,new ComparatorDistanceBased(image,metric,type));
 	}
 
 	/**
-	 * perform a search for all descriptors...
-	 * 
-	 * @param query
-	 * @param metric
-	 * @param resultAmount
-	 * @return the top resultAmount results
+	 * Performs a search for the given query image and returns the "resultAmount" best results.
+	 * @param query the query image that is used.
+	 * @param resultAmount the desired amount of results.
+	 * @return the best "resultAmount" results in a list.
 	 */
 	@Override
 	public List<Image> search(final Image query, 
 			final DescriptorType type, int resultAmount) {
-		// use index structure if possible
 		if (trees.containsKey(type))
 			return trees.get(type).nearestNeighborSearch(resultAmount, query,
 					metric, type);
-		// otherwise just use sorting to make the ranking
-//		 Collections.sort(database, new Comparator<Image>() {
-//		 @Override
-//		 public int compare(Image a, Image b) {
-//		 if (metric.distance(a, query, type) < metric.distance(b, query,
-//		 type))
-//		 return -1;
-//		 if (metric.distance(a, query, type) > metric.distance(b, query,
-//		 type))
-//		 return 1;
-//		 return 0;
-//		 }
-//		 });	
-//		 return database.subList(0, resultAmount);
+
   		return findNearestNeighbors(query, type, resultAmount);
 	}
 
-	public void printResultList(List<Image> results, DescriptorType type) {
-		System.out.println("<h1> " + results.get(0).getFilename() + " " + type
-				+ " </h1>");
-		int i = 0;
-		for (Image curr : results) {
-			System.out
-					.println(i + " <img src=\"" + curr.getFilename() + "\" width=\"150px\" height=\"150px\"/>");
-			i++;
-		}
-	}
-
+	/**
+	 * Prints a list of images to a given file in html format.
+	 * @param results the list of images to be printed.
+	 * @param type the descriptortype is also printed.
+	 * @param filename the filename of the target file.
+	 */
 	@Override
 	public void printResultListHTML(List<Image> results, DescriptorType type,
 			String filename) {
 		Utility.printResultListHTML(results, type, filename);
 	}
 
+	/**
+	 * Queries for an image with a specific name.
+	 * @param filename of the image.
+	 * @return The image object with the given filename or null if not found.
+	 */
 	@Override
 	public Image getImageByName(String name) {
 		return Utility.getImageByName(database, name);
 	}
 
+	/**
+	 * A getter for the database.
+	 * @return a list of Images that describe the database.
+	 */
 	@Override
 	public List<Image> getDatabase() {
 		return database;

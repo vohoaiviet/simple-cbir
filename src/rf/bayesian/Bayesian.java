@@ -16,9 +16,17 @@ import cbir.interfaces.Retriever;
  */
 public class Bayesian implements RelevanceFeedback {
 	
-	private double[] expectationRelevant, expectationIrrelevant;
-	private double scatterWithin, scatterBetween;
+	/** The expectated descriptor vector of the relevant images. **/
+	private double[] expectationRelevant;
+	/** The expectated descriptor vector of the irrelevant images. **/
+	private double [] expectationIrrelevant;
+	/** Scatter within is the averaged deviation from the two expectation vectors of the image classes. **/
+	private double scatterWithin;
+	/** Scatter between is the distance between the expectation vectors.**/
+	private double scatterBetween;
+	/** The approximation of the variance. **/
 	private double sigmaSquare;
+	/** The expectated descriptor vector of the relevant images. **/
 	private boolean useScatterSigma = true;
 	
 	/**
@@ -30,7 +38,7 @@ public class Bayesian implements RelevanceFeedback {
 	}
 	
 	/**
-	 * The boolean flag of the constructor denotes which approximation is used for simga.
+	 * The boolean flag of the constructor denotes which approximation is used for sigma.
 	 * @param useScatterSigma if this is true sigmaSquare equals the product of scatterBetween and scatterWithin,
 	 * else sigmaSquare is the average Variance of the positives and negatives. 
 	 */
@@ -180,15 +188,23 @@ public class Bayesian implements RelevanceFeedback {
 					* (1 - ((NR - NN) / Math.max(NR, NN)))
 					* (expectationRelevant[i] - expectationIrrelevant[i]);
 		}
-		//System.out.println("old query vector: "+Arrays.toString(query.getDescriptor(type).getValues()));
 		Descriptor descriptor = query.getDescriptor(type);
 		descriptor.setValues(shiftedQuery);
-		//System.out.println("new query vector: "+Arrays.toString(query.getDescriptor(type).getValues()));
 		return query;
 	}
 
 
-	
+	/**
+	 * Performs a relevance feedback iteration. Side effect:
+	 * all the RF Methods add the positively and negatively marked images to the query Image object.
+	 * @param retriever the retriever which is used to search.
+	 * @param query the query image.
+	 * @param type the descriptortype which was used for the query.
+	 * @param positives the images marked as positive.
+	 * @param negatives the images marked as negative.
+	 * @param resultAmount the number of desired results.
+	 * @return the results after considering the user feedback.
+	 */
 	@Override
 	public List<Image> relevanceFeedbackIteration(Retriever retriever,
 			Image query, DescriptorType type, Metric metric,

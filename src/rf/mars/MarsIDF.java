@@ -11,65 +11,37 @@ import cbir.interfaces.RelevanceFeedback;
 import cbir.interfaces.Retriever;
 
 /**
- * this class implements the tfxidf relevance feedback approach from Mars
+ * Provides the functionality of the rocchio query shifting approach.
+ * @author Chris Wendler
  */
 
 public class MarsIDF implements RelevanceFeedback {
-	private final List<Image> database;
-	private final DescriptorType descriptorOfInterest;
-	private double[] means;
-	private double[] deviation;
-	// 30,50,20 worked pretty well
-	// wikipedia: 1, 0.8, 0.1
-	private double weightQuery = 50.d / 100.d,
-			weightPositives = 25.d / 100.d, weightNegatives = 25.d / 100.d;
+	/**
+	 * These are the weights of the rocchio equation, some values that worked well are:
+	 * 1, 0.75, 0.15
+	 */
+	private double weightQuery = 100.d / 100.d,
+			weightPositives = 75.d / 100.d, weightNegatives = 15.d / 100.d;
 
 	/**
-	 * prepares the descriptors of type descriptor in the given database for
-	 * relevance feedback
-	 * 
-	 * @param database
-	 * @param descriptor
-	 * @param k 
-	 * @param j 
-	 * @param i 
+	 * When you not initiate the weights the default values
+	 * 1, 0.76, 0.15 are used.
 	 */
-	public MarsIDF(List<Image> database, DescriptorType descriptor, double a, double b, double c) {
-		this.database = database;
-		this.descriptorOfInterest = descriptor;
+	public MarsIDF(){
+		super();
+	}
+	
+	/**
+	 * The constructor needs the weights for the rocchio equation.
+	 * @param a is the weight that is applied to the old query vector (e.g. 1.0).
+	 * @param b is the weight that is applied to the mean of the positively marked images (e.g. 0.75).
+	 * @param c is the weight that is applied to the mean of the negatively marked images (e.g. 0.15).
+	 */
+	public MarsIDF(double a, double b, double c) {
+		super();
 		weightQuery = a;
 		weightPositives = b;
 		weightNegatives = c;
-	}
-
-
-	/**
-	 * normalizes the entries of a given descriptor
-	 * 
-	 * @param descriptor
-	 */
-	public void normalize(DescriptorType descriptor) {
-		calculateMeans();
-		calculateDeviations();
-		Utility.normalizeDescriptorsPositive(database, descriptor, means,
-				deviation);
-	}
-
-	/**
-	 * calculates the mean for every feature of a feature vector among all
-	 * images in the database
-	 */
-	public void calculateMeans() {
-		means = Utility.calculateMeans(database, descriptorOfInterest);
-	}
-
-	/**
-	 * calculates the deviation for every feature of a feature vector among all
-	 * images in the database
-	 */
-	public void calculateDeviations() {
-		deviation = Utility.calculateDeviations(database,
-				descriptorOfInterest, means);
 	}
 
 	/**
@@ -112,21 +84,15 @@ public class MarsIDF implements RelevanceFeedback {
 	}
 
 	/**
-	 * performs a relevancefeedback iteration
-	 * 
-	 * @param retriever
-	 *            the retriever which is used to search
-	 * @param query
-	 *            the query image
-	 * @param type
-	 *            the descriptortype which was used for the query
-	 * @param positives
-	 *            the images marked positive
-	 * @param negatives
-	 *            the images marked negative
-	 * @param resultAmount
-	 *            the number of desired results
-	 * @return the results after considering the user feedback
+	 * Performs a relevance feedback iteration. Side effect:
+	 * all the RF Methods add the positively and negatively marked images to the query Image object.
+	 * @param retriever the retriever which is used to search.
+	 * @param query the query image.
+	 * @param type the descriptortype which was used for the query.
+	 * @param positives the images marked as positive.
+	 * @param negatives the images marked as negative.
+	 * @param resultAmount the number of desired results.
+	 * @return the results after considering the user feedback.
 	 */
 	@Override
 	public List<Image> relevanceFeedbackIteration(Retriever retriever,
@@ -135,11 +101,8 @@ public class MarsIDF implements RelevanceFeedback {
 		Utility.addImagesToList(query.getPositives(), positives);
 		Utility.addImagesToList(query.getNegatives(), negatives);
 		
-		
-		// move query vector:
-		//System.out.println("old query vector: "+Arrays.toString(query.getDescriptor(type).getValues()));
+	
 		query = learnQueryVector(query, query.getPositives(), query.getNegatives(), type);
-		//System.out.println("new query vector: "+Arrays.toString(query.getDescriptor(type).getValues()));
 		List<Image> results = retriever.search(query,
 				type, resultAmount);
 

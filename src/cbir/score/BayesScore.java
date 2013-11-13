@@ -8,19 +8,49 @@ import cbir.image.DescriptorType;
 import cbir.image.Image;
 import cbir.interfaces.Metric;
 
+/**
+ * Provides the score computation using the Bayesian Query Shifting approach.
+ * 
+ * @author Chris Wendler
+ */
 public class BayesScore implements cbir.interfaces.Score {
+	/** The image database. **/
 	private List<Image> database;
+	/** The used distance metric in the score computation. **/
 	private Metric norm;
+	/** The Query Image after applying Bayesian Query Shifting. **/
 	private volatile Image BQS;
+	/**
+	 * The Image in the database with the maximum distance to the BQS query
+	 * vector.
+	 **/
 	private volatile Image BQSmax;
+	/**
+	 * A variable used to synchronize the usage of this scoring function in case
+	 * many threads compute the score at the same time.
+	 **/
 	private volatile int k = 0;
 
+	/**
+	 * Initializes the norm and database fields.
+	 * 
+	 * @param metric
+	 *            the preferred metric for all computations.
+	 * @param database
+	 *            the list of images that is used as the database.
+	 */
 	public BayesScore(Metric metric, List<Image> database) {
 		super();
 		this.norm = metric;
 		this.database = database;
 	}
 
+	/**
+	 * Initializes all needed variables for the score computation.
+	 * 
+	 * @param query
+	 * @param type
+	 */
 	public void init(final Image query, final DescriptorType type) {
 		BQS = new Bayesian().shiftQuery(query, type);
 		BQSmax = cbir.retriever.Utility.findNearestNeighbors(database, 1,
@@ -37,14 +67,19 @@ public class BayesScore implements cbir.interfaces.Score {
 					}
 				}).get(0);
 	}
-
+	/**
+	 * Calculates a score for the given image.
+	 * @param query the query vector containing all positively and negatively marked images.
+	 * @param image the image for which the score is computed.
+	 * @param type the type of descriptor which is considered in the score computation.
+	 * @return the score of the image.
+	 */
 	@Override
 	public double score(final Image query, final Image image,
 			final DescriptorType type) {
 		int knew = query.getPositives().size() + query.getNegatives().size();
 		synchronized (this) {
 			if (k != knew) {
-				//System.out.println("k " + k + " knew " + knew);
 				k = knew;
 				init(query, type);
 			}
@@ -53,7 +88,6 @@ public class BayesScore implements cbir.interfaces.Score {
 
 		dBQS = norm.distance(BQS, image, type);
 		dBQSmax = norm.distance(BQSmax, image, type);
-		// relevanceBQS = 1 - dBQS;
 		relevanceBQS = (1 - Math.pow(Math.E, (1 - (dBQS / dBQSmax))))
 				/ (1 - Math.E);
 
