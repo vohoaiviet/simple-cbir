@@ -21,11 +21,23 @@ import cbir.reader.FireReader;
 import cbir.reader.XMLReader;
 import cbir.retriever.RetrieverDistanceBased;
 
+/**
+ * Performs a query with Relevance Feedback.
+ * 
+ * @author Chris Wendler
+ * @author Matej Stanic
+ * 
+ */
 public class RelevanceFeedbackTest {
 	// TODO change output file here
 	public static String resultFolder = "C:\\Users\\Chris\\Desktop\\";
-	public static String outputfile = resultFolder
-			+ "livedemo_cars.html";
+	public static String outputfile = resultFolder + "livedemo_cars.html";
+	public static Metric metric = new WeightedEuclidean(null);
+	public static DescriptorType type = DescriptorType.MERGED;
+	public static Normalization normalization = Normalization.GAUSSIAN_0to1;
+	public static File xml_path = new File(
+			"C:\\MBOX\\signed_all\\lentos_color_ehd_2.xml");
+	public static boolean indexingOn = false;
 
 	/**
 	 * demo implementation of relevance feedback circle
@@ -119,7 +131,7 @@ public class RelevanceFeedbackTest {
 				System.out
 						.println("precision of previous query: "
 								+ ((positives.size() / (double) (positives
-										.size() + negatives.size()))*100));
+										.size() + negatives.size())) * 100));
 
 				result = rf.relevanceFeedbackIteration(retriever, query, type,
 						metric, positives, negatives, 20);
@@ -142,30 +154,10 @@ public class RelevanceFeedbackTest {
 	public static void main(String[] args) {
 		try {
 
-			// TODO change metric, descriptor & normalization here
-			Metric metric = new WeightedEuclidean(null);
-			DescriptorType type = DescriptorType.MERGED;
-			Normalization normalization = Normalization.GAUSSIAN_0to1;
-
 			long starttime, endtime;
 			starttime = System.currentTimeMillis();
 
-			 List<Image> database = new XMLReader()
-			 .parseXMLFile(new File(
-			 "C:\\MBOX\\signed_all\\lentos_color_ehd_2.xml"));
-
-			// List<Image> database = new XMLReader()
-			// .parseXMLFile(new File(
-			// "C:\\MBOX\\signed_all\\oemv_cedd_ehd_color.xml"));
-			//
-
-			// cars
-			// TODO change XML file here (EHD)
-//			 List<Image> database = new XMLReader().parseXMLFile(new File(
-//			 "C:\\MBOX\\signed_all\\cars_ehd.xml"));
-
-//			List<Image> database = new XMLReader().parseXMLFile(new File(
-//					"C:\\MBOX\\signed_all\\madias_index.xml"));
+			List<Image> database = new XMLReader().parseXMLFile(xml_path);
 
 			LabelUtils.labelDatabase(database);
 			new FireReader().readDescriptors(database,
@@ -188,7 +180,7 @@ public class RelevanceFeedbackTest {
 			// Add indexing here
 			// TODO change RF, add indexing
 			RetrieverDistanceBased retriever = new RetrieverDistanceBased(
-					database, metric);
+					database, metric, type);
 
 			endtime = System.currentTimeMillis();
 			Utils.printToFile(outputfile, "<p>indexing: "
@@ -213,22 +205,22 @@ public class RelevanceFeedbackTest {
 			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\OeMV_signed\\0_000_025_287.jpg").deepCopy());
 			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\OeMV_signed\\0_000_025_138.jpg").deepCopy());
 			// madias
-//			queries.add(retriever
-//					.getImageByName(
-//							"C:\\MBOX\\signed_all\\madias_signed\\0_000_002_517.jpg")
-//					.deepCopy());
-//			queries.add(retriever
-//					.getImageByName(
-//							"C:\\MBOX\\signed_all\\madias_signed\\0_000_005_319.jpg")
-//					.deepCopy());
-//			queries.add(retriever
-//					.getImageByName(
-//							"C:\\MBOX\\signed_all\\madias_signed\\0_000_007_167.jpg")
-//					.deepCopy());
-//			queries.add(retriever
-//					.getImageByName(
-//							"C:\\MBOX\\signed_all\\madias_signed\\0_000_011_014.jpg")
-//					.deepCopy());
+			// queries.add(retriever
+			// .getImageByName(
+			// "C:\\MBOX\\signed_all\\madias_signed\\0_000_002_517.jpg")
+			// .deepCopy());
+			// queries.add(retriever
+			// .getImageByName(
+			// "C:\\MBOX\\signed_all\\madias_signed\\0_000_005_319.jpg")
+			// .deepCopy());
+			// queries.add(retriever
+			// .getImageByName(
+			// "C:\\MBOX\\signed_all\\madias_signed\\0_000_007_167.jpg")
+			// .deepCopy());
+			// queries.add(retriever
+			// .getImageByName(
+			// "C:\\MBOX\\signed_all\\madias_signed\\0_000_011_014.jpg")
+			// .deepCopy());
 
 			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\madias_signed\\0_000_007_321.jpg"));
 			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\madias_signed\\0_000_018_468.jpg"));
@@ -256,14 +248,22 @@ public class RelevanceFeedbackTest {
 			// queries.add(retriever.getImageByName(
 			// "C:\\MBOX\\signed\\hdk_5730.jpg").deepCopy());
 			try {
-				 queries.add(retriever
-				 .getImageByName("C:\\MBOX\\signed_all\\Lentos_signed\\0_000_000_063.jpg").deepCopy());
-				 queries.add(retriever
-				 .getImageByName("C:\\MBOX\\signed_all\\Lentos_signed\\0_000_001_161.jpg").deepCopy());
-				 queries.add(retriever
-				 .getImageByName("C:\\MBOX\\signed_all\\Lentos_signed\\0_000_009_410.jpg").deepCopy());
-				 queries.add(retriever
-				 .getImageByName("C:\\MBOX\\signed_all\\Lentos_signed\\0_000_001_023.jpg").deepCopy());
+				queries.add(retriever
+						.getImageByName(
+								"C:\\MBOX\\signed_all\\Lentos_signed\\0_000_000_063.jpg")
+						.deepCopy());
+				queries.add(retriever
+						.getImageByName(
+								"C:\\MBOX\\signed_all\\Lentos_signed\\0_000_001_161.jpg")
+						.deepCopy());
+				queries.add(retriever
+						.getImageByName(
+								"C:\\MBOX\\signed_all\\Lentos_signed\\0_000_009_410.jpg")
+						.deepCopy());
+				queries.add(retriever
+						.getImageByName(
+								"C:\\MBOX\\signed_all\\Lentos_signed\\0_000_001_023.jpg")
+						.deepCopy());
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -300,9 +300,10 @@ public class RelevanceFeedbackTest {
 				Utils.printToFile(outputfile, "<p> query: "
 						+ (endtime - starttime) + " ms.</p>");
 				// TODO: change rf here
-				// new NearestNeighbors(new NNBayesScore(metric, new BayesScore(metric, results), new NNScore(metric)))
-				relevanceFeedbackDemo(new Bayesian(false), retriever,
-						query, type, metric, results);
+				// new NearestNeighbors(new NNBayesScore(metric, new
+				// BayesScore(metric, results), new NNScore(metric)))
+				relevanceFeedbackDemo(new Bayesian(false), retriever, query,
+						type, metric, results);
 			}
 
 		} catch (DocumentException | IOException e) {
