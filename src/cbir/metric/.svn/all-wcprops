@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/57/trunk/src/cbir/metric
+END
+Cosine.java
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/38/trunk/src/cbir/metric/Cosine.java
+END
+WeightedCosine.java
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/57/trunk/src/cbir/metric/WeightedCosine.java
+END
+MetricUtility.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/36/trunk/src/cbir/metric/MetricUtility.java
+END
+Gaussian.java
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/42/trunk/src/cbir/metric/Gaussian.java
+END
+WeightedGaussian.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/42/trunk/src/cbir/metric/WeightedGaussian.java
+END

@@ -1,0 +1,135 @@
+package cbir;
+
+import ind.kdtree.KDTree;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import cbir.image.DescriptorType;
+import cbir.image.Image;
+import cbir.interfaces.Metric;
+import cbir.metric.Cosine;
+
+/**
+ * Class that realizes a query.
+ * 
+ * @author chris
+ * 
+ */
+public class Retriever {
+	private List<Image> database;
+	private final KDTree tree;
+
+	public Retriever(List<Image> database) {
+		this.database = database;
+		this.tree = new KDTree(database, database.get(0)
+				.getDescriptor(DescriptorType.MERGED).getValues().length,
+				DescriptorType.MERGED);
+	}
+
+	/**
+	 * perform a search for all descriptors...
+	 * 
+	 * @param query
+	 * @param metric
+	 * @param resultAmount
+	 * @return the top resultAmount results
+	 */
+	public List<Image> search(final Image query, final Metric metric,
+			final DescriptorType type, int resultAmount) {
+		if (type.equals(DescriptorType.MERGED))
+			return tree
+					.nearestNeighborSearch(resultAmount, query, metric, type);
+
+		Collections.sort(database, new Comparator<Image>() {
+			@Override
+			public int compare(Image a, Image b) {
+				if (metric.distance(a, query, type) < metric.distance(b, query,
+						type))
+					return -1;
+				if (metric.distance(a, query, type) > metric.distance(b, query,
+						type))
+					return 1;
+				return 0;
+			}
+		});
+
+		for (int i = 0; i < resultAmount; i++)
+			System.out.println(i + " "
+					+ new Cosine().distance(query, database.get(i), type));
+
+		return database.subList(0, resultAmount);
+	}
+
+	public void printResultList(List<Image> results, DescriptorType type) {
+		System.out.println("<h1> " + results.get(0).getFilename() + " " + type
+				+ " </h1>");
+		int i = 0;
+		for (Image curr : results) {
+			System.out
+					.println(i + " <img src=\"" + curr.getFilename() + "\"/>");
+			i++;
+		}
+	}
+
+	public void printResultListHTML(List<Image> results, DescriptorType type,
+			String filename) {
+		try {
+			File file = new File(filename);
+			FileWriter out = new FileWriter(file, true);
+			
+			out.write("<h1> " + results.get(0).getFilename() + " " + type
+					+ " </h1>\n");
+			int i = 0;
+			for (Image curr : results) {
+				out.write(i + " <img src=\"" + curr.getFilename() + "\"/>\n");
+				i++;
+			}
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	// public List<Image> search(final Descriptor query, final Metric metric,
+	// int resultAmount){
+	// List<Image> results;
+	// Collections.sort(database, new Comparator<Image>(){
+	// DescriptorType type = query.getType();
+	// @Override
+	// public int compare(Image a, Image b) {
+	// if(metric.distance(a.getDescriptor(type), query) <
+	// metric.distance(b.getDescriptor(type), query))
+	// return -1;
+	// if(metric.distance(a.getDescriptor(type), query) >
+	// metric.distance(b.getDescriptor(type), query))
+	// return 1;
+	// return 0;
+	// }
+	// });
+	//
+	// results = database.subList(0, resultAmount);
+	// return results;
+	// }
+
+	public Image getImageByName(String name) {
+		for (Image curr : database)
+			if (curr.getFilename().equals(name))
+				return curr;
+		return null;
+	}
+
+	public List<Image> getDatabase() {
+		return database;
+	}
+
+	public void setDatabase(List<Image> database) {
+		this.database = database;
+	}
+
+}

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/42/trunk/src/ind/kdtree
+END
+TreePrinter.java
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/33/trunk/src/ind/kdtree/TreePrinter.java
+END
+KDNode.java
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/37/trunk/src/ind/kdtree/KDNode.java
+END
+KDTree.java
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/42/trunk/src/ind/kdtree/KDTree.java
+END
+KDTreeTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/37/trunk/src/ind/kdtree/KDTreeTest.java
+END
