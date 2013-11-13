@@ -2,22 +2,17 @@ package cbir.interfaces;
 
 import cbir.image.DescriptorType;
 import cbir.image.Image;
-
+/**
+ * This is the metric interface.
+ * @author Chris Wendler
+ */
 public interface Metric {
-	/**
-	 * The distance between two descriptors
-	 * @param a
-	 * @param b
-	 * @return distance
-	 */
-	//public double distance(Descriptor a, Descriptor b);
 	
 	/**
 	 * The distance between two images, considering descriptors of a specific type.
-	 * Note: this method has some can have some additional functionality since there is more information.
-	 * @param a
-	 * @param b
-	 * @return distance
+	 * @param a is an image.
+	 * @param b is another image.
+	 * @return distance is the distance between the two given images.
 	 */
 	public double distance(Image a, Image b, DescriptorType type);
 	

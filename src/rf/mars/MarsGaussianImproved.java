@@ -8,7 +8,7 @@ import cbir.image.Image;
 import cbir.interfaces.Metric;
 import cbir.interfaces.RelevanceFeedback;
 import cbir.interfaces.Retriever;
-import cbir.metric.WeightedGaussian;
+import cbir.metric.WeightedEuclidean;
 import cbir.retriever.RetrieverDistanceBased;
 
 /**
@@ -80,7 +80,7 @@ public class MarsGaussianImproved implements RelevanceFeedback {
 		lastweights = weights;
 		iteration++;
 		
-		return new RetrieverDistanceBased(retriever.getDatabase(),new WeightedGaussian(weights)).search(query,
+		return new RetrieverDistanceBased(retriever.getDatabase(),new WeightedEuclidean(weights)).search(query,
 				type, resultAmount);
 	}
 

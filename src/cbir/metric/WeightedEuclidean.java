@@ -6,26 +6,26 @@ import cbir.image.Image;
 import cbir.interfaces.Metric;
 
 /**
- * Implements the weighted gaussian metric.
+ * Implements the weighted euclidean metric.
  * 
  * @author Chris Wendler
  * 
  */
-public class WeightedGaussian implements Metric {
+public class WeightedEuclidean implements Metric {
 	/** The weights used. */
 	private double weights[] = null;
 
 	/**
 	 * Constructor.
 	 */
-	public WeightedGaussian(double[] weights) {
+	public WeightedEuclidean(double[] weights) {
 		super();
 		this.weights = weights;
 	}
 
 	@Override
 	/**
-	 * Computes the weighted gaussian distance between two images.
+	 * Computes the weighted euclidean distance between two images.
 	 * 
 	 * @param a
 	 * 			An image.
@@ -45,7 +45,7 @@ public class WeightedGaussian implements Metric {
 	}
 
 	/**
-	 * Computes the weighted gaussian distance between two descriptors.
+	 * Computes the weighted euclidean distance between two descriptors.
 	 * 
 	 * @param a
 	 *            A descriptor.
