@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.dom4j.DocumentException;
 
@@ -29,20 +30,63 @@ import cbir.retriever.RetrieverDistanceBased;
  * 
  */
 public class RelevanceFeedbackTest {
-	// TODO change output file here
+	/** The folder where the resulting html file will be stored. **/
 	public static String resultFolder = "C:\\Users\\Chris\\Desktop\\";
+	/** The name of the output-file can be specified here.**/
 	public static String outputfile = resultFolder + "livedemo_cars.html";
-	public static Metric metric = new WeightedEuclidean(null);
+	/** The metric that is used for the ranking. **/
+	public static Metric metric = new WeightedEuclidean();
+	/** The descriptor-type of interest for the ranking. **/
 	public static DescriptorType type = DescriptorType.MERGED;
+	/** The normalization that is used on the descriptor of interest, this is important for the
+	 *  merged descriptor!**/
 	public static Normalization normalization = Normalization.GAUSSIAN_0to1;
+	/** The path of the xml file containing the descriptors for your database. **/
 	public static File xml_path = new File(
 			"C:\\MBOX\\signed_all\\lentos_color_ehd_2.xml");
-	public static boolean indexingOn = false;
+	/** Indicates whether you want to use indexing or not. **/
+	public static boolean useIndexing = false;
+	/**
+	 * Alternatively you can add all the types that you want to index into this
+	 * array manually. (care that if you set useIndexing true the element on position 0 will get
+	 * overwritten)
+	 **/
+	public static DescriptorType [] indexingFor;
+	/** The relevance feedback method that should be used has to be specified here. **/
+	public static RelevanceFeedback rf = new Bayesian();
+	/** For this test you can change the amount of random queries that is performed here,
+	 *  if you want to use your own query images you have to rewrite the main method. **/
+	public static int queryAmount = 5;
 
 	/**
-	 * demo implementation of relevance feedback circle
+	 * This is a demo implementation of a relevance feedback iteration. usage: *
+	 * for each rf iteration you need to specify the indices of the relevant and
+	 * irrelevant images * there are several commands that the demo user
+	 * interface accepts: * * "others": this command has to be entered when the
+	 * program asks for irrelevant images, by entering "others" all images that
+	 * are not marked as relevant are considered as irrelevant. * "all": this
+	 * command has to be entered when the program asks for relevant images. This
+	 * means that all images are considered as positive. * "assist": this
+	 * command has to be entered when the program asks for relevant images,
+	 * after assist you have to specify the file name of the file that contains
+	 * the already marked images. IMPORTANT: you still have to mark the positive images in the same line. 
+	 * * "quit": this command has to be entered when the program asks
+	 * for relevant images, and causes the rf demo to stop, so the next query
+	 * can be performed. After stop you can specify a filename where the marked images should be
+	 * saved, this is needed when you want to use the assistant function in the future.
 	 * 
+	 * @param rf
+	 *            the relevance feedback method that is used.
+	 * @param retriever
+	 *            the retriever that is used.
+	 * @param query
+	 *            the query image for which rf is performed.
 	 * @param type
+	 *            the descriptor-type of interest.
+	 * @param metric
+	 *            the metric that is used to calculate the ranking.
+	 * @param result
+	 *            the result list of the previous iteration.
 	 */
 	public static void relevanceFeedbackDemo(RelevanceFeedback rf,
 			RetrieverDistanceBased retriever, Image query, DescriptorType type,
@@ -63,7 +107,8 @@ public class RelevanceFeedbackTest {
 						&& relevant.substring(0, 4).equals("quit")) {
 					String[] tokens = relevant.split(" ");
 					if (tokens.length == 2)
-						Utils.printQueryHits(resultFolder + tokens[1], query);
+						RFAssistant.printQueryHits(resultFolder + tokens[1],
+								query);
 					break;
 				}
 				System.out
@@ -82,7 +127,7 @@ public class RelevanceFeedbackTest {
 				negatives = new LinkedList<Image>();
 				int i = 0;
 				if (indicesRelevant[0].equals("assist")) {
-					rfassi = Utils.createRFAssistant(resultFolder
+					rfassi = RFAssistant.createRFAssistant(resultFolder
 							+ indicesRelevant[1]);
 					i = 2;
 				}
@@ -178,9 +223,17 @@ public class RelevanceFeedbackTest {
 			starttime = endtime;
 
 			// Add indexing here
-			// TODO change RF, add indexing
-			RetrieverDistanceBased retriever = new RetrieverDistanceBased(
-					database, metric, type);
+			if (useIndexing){
+				indexingFor = new DescriptorType[1];
+				indexingFor[0] = type;
+			}
+			RetrieverDistanceBased retriever;
+			if(indexingFor != null)
+				retriever = new RetrieverDistanceBased(
+						database, metric, indexingFor);
+			else
+				retriever = new RetrieverDistanceBased(
+						database, metric);
 
 			endtime = System.currentTimeMillis();
 			Utils.printToFile(outputfile, "<p>indexing: "
@@ -188,110 +241,15 @@ public class RelevanceFeedbackTest {
 			starttime = endtime;
 
 			List<Image> queries = new LinkedList<Image>();
-			// TODO change query images here
-			//
-			// // lentos
-			// queries.add(retriever
-			// .getImageByName("C:\\MBOX\\signed_all\\Lentos_signed\\0_000_000_063.jpg").deepCopy());
-			// queries.add(retriever
-			// .getImageByName("C:\\MBOX\\signed_all\\Lentos_signed\\0_000_001_161.jpg").deepCopy());
-			// queries.add(retriever
-			// .getImageByName("C:\\MBOX\\signed_all\\Lentos_signed\\0_000_009_410.jpg").deepCopy());
-			// queries.add(retriever
-			// .getImageByName("C:\\MBOX\\signed_all\\Lentos_signed\\0_000_001_023.jpg").deepCopy());
-			// oemv
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\OeMV_signed\\0_000_028_693.jpg").deepCopy());
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\OeMV_signed\\0_000_010_614.jpg").deepCopy());
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\OeMV_signed\\0_000_025_287.jpg").deepCopy());
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\OeMV_signed\\0_000_025_138.jpg").deepCopy());
-			// madias
-			// queries.add(retriever
-			// .getImageByName(
-			// "C:\\MBOX\\signed_all\\madias_signed\\0_000_002_517.jpg")
-			// .deepCopy());
-			// queries.add(retriever
-			// .getImageByName(
-			// "C:\\MBOX\\signed_all\\madias_signed\\0_000_005_319.jpg")
-			// .deepCopy());
-			// queries.add(retriever
-			// .getImageByName(
-			// "C:\\MBOX\\signed_all\\madias_signed\\0_000_007_167.jpg")
-			// .deepCopy());
-			// queries.add(retriever
-			// .getImageByName(
-			// "C:\\MBOX\\signed_all\\madias_signed\\0_000_011_014.jpg")
-			// .deepCopy());
-
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\madias_signed\\0_000_007_321.jpg"));
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\madias_signed\\0_000_018_468.jpg"));
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\madias_signed\\0_000_019_441.jpg"));
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\madias_signed\\0_000_000_017.jpg"));
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\madias_signed\\0_000_000_094.jpg"));
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\madias_signed\\0_000_000_656.jpg"));
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\madias_signed\\0_000_005_242.jpg"));
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\madias_signed\\0_000_005_586.jpg"));
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\madias_signed\\0_000_007_120.jpg"));
-			// queries.add(retriever.getImageByName("C:\\MBOX\\signed_all\\madias_signed\\0_000_019_516.jpg"));
-			// cars
-			// queries.add(retriever.getImageByName(
-			// "C:\\MBOX\\signed\\hdk_5730.jpg").deepCopy());
-			// queries.add(retriever.getImageByName(
-			// "C:\\MBOX\\signed\\hdk_2859.jpg").deepCopy());
-			// queries.add(retriever.getImageByName(
-			// "C:\\MBOX\\signed\\hdk_1809.jpg").deepCopy());
-			// queries.add(retriever.getImageByName(
-			// "C:\\MBOX\\signed\\hdk_2497.jpg").deepCopy());
-			// queries.add(retriever.getImageByName(
-			// "C:\\MBOX\\signed\\hdk_1025.jpg").deepCopy());
-			// queries.add(retriever.getImageByName(
-			// "C:\\MBOX\\signed\\hdk_4882.jpg").deepCopy());
-			// queries.add(retriever.getImageByName(
-			// "C:\\MBOX\\signed\\hdk_5730.jpg").deepCopy());
 			try {
-				queries.add(retriever
-						.getImageByName(
-								"C:\\MBOX\\signed_all\\Lentos_signed\\0_000_000_063.jpg")
-						.deepCopy());
-				queries.add(retriever
-						.getImageByName(
-								"C:\\MBOX\\signed_all\\Lentos_signed\\0_000_001_161.jpg")
-						.deepCopy());
-				queries.add(retriever
-						.getImageByName(
-								"C:\\MBOX\\signed_all\\Lentos_signed\\0_000_009_410.jpg")
-						.deepCopy());
-				queries.add(retriever
-						.getImageByName(
-								"C:\\MBOX\\signed_all\\Lentos_signed\\0_000_001_023.jpg")
-						.deepCopy());
+				for(int i = 0; i < queryAmount; i++){
+					Random rand = new Random();
+					queries.add(database.get(rand.nextInt(database.size())).deepCopy());
+				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 
-			// queries.add(database.get((int) (Math.random()*10000) %
-			// database.size()));
-			// queries.add(database.get((int) (Math.random()*10000) %
-			// database.size()));
-			// queries.add(database.get((int) (Math.random()*10000) %
-			// database.size()));
-			// queries.add(database.get((int) (Math.random()*10000) %
-			// database.size()));
-			// queries.add(database.get((int) (Math.random()*10000) %
-			// database.size()));
-			// queries.add(database.get((int) (Math.random()*10000) %
-			// database.size()));
-			// queries.add(database.get((int) (Math.random()*10000) %
-			// database.size()));
-			// queries.add(database.get((int) (Math.random()*10000) %
-			// database.size()));
-			// queries.add(database.get((int) (Math.random()*10000) %
-			// database.size()));
-			// queries.add(database.get((int) (Math.random()*10000) %
-			// database.size()));
-			// queries.add(database.get((int) (Math.random()*10000) %
-			// database.size()));
-			// queries.add(database.get((int) (Math.random()*10000) %
-			// database.size()));
 			for (Image query : queries) {
 				starttime = System.currentTimeMillis();
 				List<Image> results = retriever.search(query, type, 20);
@@ -299,11 +257,8 @@ public class RelevanceFeedbackTest {
 				endtime = System.currentTimeMillis();
 				Utils.printToFile(outputfile, "<p> query: "
 						+ (endtime - starttime) + " ms.</p>");
-				// TODO: change rf here
-				// new NearestNeighbors(new NNBayesScore(metric, new
-				// BayesScore(metric, results), new NNScore(metric)))
-				relevanceFeedbackDemo(new Bayesian(false), retriever, query,
-						type, metric, results);
+				relevanceFeedbackDemo(rf, retriever, query, type, metric,
+						results);
 			}
 
 		} catch (DocumentException | IOException e) {

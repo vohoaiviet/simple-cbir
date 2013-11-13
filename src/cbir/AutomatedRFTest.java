@@ -11,18 +11,15 @@ import org.dom4j.DocumentException;
 
 import rf.Utility;
 import rf.Utility.Normalization;
-import rf.nn.NearestNeighbors;
+import rf.bayesian.Bayesian;
 import cbir.image.DescriptorType;
 import cbir.image.Image;
 import cbir.interfaces.Metric;
 import cbir.interfaces.RelevanceFeedback;
-import cbir.metric.WeightedCosine;
+import cbir.metric.WeightedEuclidean;
 import cbir.reader.FireReader;
 import cbir.reader.XMLReader;
 import cbir.retriever.RetrieverDistanceBased;
-import cbir.score.BayesScore;
-import cbir.score.NNBayesScore;
-import cbir.score.NNScore;
 
 /**
  * A class which simulates an automatic CBIR test.
@@ -31,27 +28,76 @@ import cbir.score.NNScore;
  * 
  */
 public class AutomatedRFTest {
-	public static String outputfile = "C:\\MBOX\\results\\corel\\automatic_time_nnbqs_wcosine_gaussian0to1_50_5_20.html";
-	public static int numOfQueries = 50;
+	/** The path of the output-file can be specified here.**/
+	public static String outputfile = "C:\\Users\\Chris\\Desktop\\automatic.html";
+	/** The number of queries that should be performed. **/
+	public static int numOfQueries = 5;
+	/** The number of RF iterations is specified here. **/
 	public static int numOfRFIterations = 4;
+	/** The number of results that are considered. **/
 	public static int numOfResults = 20;
-	public static List<Integer> randomQueryIndices = new ArrayList<Integer>(numOfQueries);
-	public static int currQuery = 0;
-	public static double [][] QueryPrecision = new double[numOfQueries][numOfRFIterations+1];
-	public static double [] precision = new double[numOfRFIterations+1]; 
-	public static double [] precisionDeviation = new double[numOfRFIterations+1];
-	// TODO configure whether new Randoms are generated or old ones are loaded
+	/** This boolean flag denotes if new random indices should be generated or not.**/
 	public static boolean newRandoms = true;
+	/** If newRandoms == false you can specify a file where the randoms should be read from. 
+	 *  Else the produced randoms will get stored in this file.**/
 	public static String randomIndicesFile = "C:\\MBOX\\results\\corel\\randomindices50.txt";
+	/** The metric that is used for the ranking. **/
+	public static Metric metric = new WeightedEuclidean();
+	/** The descriptor-type of interest for the ranking. **/
+	public static DescriptorType type = DescriptorType.MERGED;
+	/** The normalization that is used on the descriptor of interest, this is important for the
+	 *  merged descriptor!**/
+	public static Normalization normalization = Normalization.GAUSSIAN_0to1;
+	/** The path of the xml file containing the descriptors for your database. **/
+	public static File xml_path = new File(
+			"C:\\MBOX\\signed_all\\corel_ehd_cedd.xml");
+	/** Indicates whether you want to use indexing or not. **/
+	public static boolean useIndexing = false;
+	/**
+	 * Alternatively you can add all the types that you want to index into this
+	 * array manually. (care that if you set useIndexing true the element on position 0 will get
+	 * overwritten)
+	 **/
+	public static DescriptorType [] indexingFor;
+	/** The relevance feedback method that should be used has to be specified here. **/
+	public static RelevanceFeedback rf = new Bayesian();
+	
+	/** Do not touch the following variables. **/
+	/** Contains the index of the current query. (do not modify this!)**/
+	public static int currQuery = 0;
+	/** The precision of every individual query in the corresponding iteration is stored here. **/
+	public static double [][] QueryPrecision = new double[numOfQueries][numOfRFIterations+1];
+	/** The average precision of the query in the corresponding iterations is stored here, where
+	 *  the index of the array is determined by the number of the current rf iteration.**/
+	public static double [] precision = new double[numOfRFIterations+1]; 
+	/** The standard deviations corresponding to the different iterations is stored here.**/
+	public static double [] precisionDeviation = new double[numOfRFIterations+1];
+	/** This is the list containing the random indices that are either generated in the program if 
+	 *  newRandoms == true, or read from a file if newRandoms == false. **/
+	public static List<Integer> randomQueryIndices = new ArrayList<Integer>(numOfQueries);
+	/** The average time of a relevance feedback iteration gets accumulated here. **/
 	public static double avgRFTIME = 0;
+	/** The time of every query without using RF gets measuered here.**/
+	public static long queryTime = 0;
 	
 
 	/**
-	 * demo implementation of relevance feedback circle
+	 * This is a implementation of an automatic relevance feedback iteration based on the labels
+	 * in the database. In addition several statistical calculations are performed.
 	 * 
+	 * @param rf
+	 *            the relevance feedback method that is used.
+	 * @param retriever
+	 *            the retriever that is used.
+	 * @param query
+	 *            the query image for which rf is performed.
 	 * @param type
+	 *            the descriptor-type of interest.
+	 * @param metric
+	 *            the metric that is used to calculate the ranking.
+	 * @param result
+	 *            the result list of the previous iteration.
 	 */
-
 	public static void relevanceFeedbackDemo(RelevanceFeedback rf,
 			RetrieverDistanceBased retriever, Image query, DescriptorType type,
 			Metric metric, List<Image> result) {
@@ -119,35 +165,13 @@ public class AutomatedRFTest {
 	public static void main(String[] args) {
 		try {
 
-			// TODO change metric, descriptor & normalization here
-			Metric metric = new WeightedCosine();
-			DescriptorType type = DescriptorType.MERGED;
-			Normalization normalization = Normalization.GAUSSIAN_0to1;
-
 			long starttime, endtime;
 			starttime = System.currentTimeMillis();
 
-			// List<Image> database = new XMLReader()
-			// .parseXMLFile(new File(
-			// "C:\\MBOX\\signed_all\\lentos_color_ehd_2.xml"));
-
-			// List<Image> database = new XMLReader()
-			// .parseXMLFile(new File(
-			// "C:\\MBOX\\signed_all\\oemv_cedd_ehd_color.xml"));
-			//
-
-			// cars
-			// TODO change XML file here (EHD)
 			System.out.println("Reading and labelling databases...");
-			List<Image> database = new XMLReader().parseXMLFile(new File(
-					"C:\\MBOX\\signed_all\\corel_ehd_cedd.xml"));
-			// List<Image> database = new XMLReader()
-			// .parseXMLFile(new File(
-			// "C:\\MBOX\\signed_all\\madias_index.xml"));
-
+			List<Image> database = new XMLReader().parseXMLFile(xml_path);
 			// set labels of images
 			LabelUtils.labelDatabase(database);
-
 			new FireReader().readDescriptors(database,
 					DescriptorType.COLOR_HISTO);
 
@@ -166,9 +190,17 @@ public class AutomatedRFTest {
 			starttime = endtime;
 
 			// Add indexing here
-			// TODO add indexing
-			RetrieverDistanceBased retriever = new RetrieverDistanceBased(
-					database, metric);
+			if (useIndexing){
+				indexingFor = new DescriptorType[1];
+				indexingFor[0] = type;
+			}
+			RetrieverDistanceBased retriever;
+			if(indexingFor != null)
+				retriever = new RetrieverDistanceBased(
+						database, metric, indexingFor);
+			else
+				retriever = new RetrieverDistanceBased(
+						database, metric);
 
 			endtime = System.currentTimeMillis();
 			Utils.printToFile(outputfile, "<p>indexing: "
@@ -178,7 +210,6 @@ public class AutomatedRFTest {
 			List<Image> queries = new LinkedList<Image>();
 			if(!newRandoms)
 				randomQueryIndices = Utils.readIntListFromFile(randomIndicesFile);
-			// TODO change query images here
 			// make random queries
 			System.out.println("Choosing random queries...");
 			Random rnd = new Random();
@@ -200,11 +231,10 @@ public class AutomatedRFTest {
 						numOfResults);
 				retriever.printResultListHTML(results, type, outputfile);
 				endtime = System.currentTimeMillis();
-				//TODO: change RF
+				queryTime += (endtime - starttime);
 				Utils.printToFile(outputfile, "<p> query: "
 						+ (endtime - starttime) + " ms.</p>");
-				//new NNBayesScore(metric,new BayesScore(metric,database), new NNScore(metric))
-				relevanceFeedbackDemo(new NearestNeighbors(new NNBayesScore(new BayesScore(metric,database), new NNScore(metric))), retriever, query, type, metric,
+				relevanceFeedbackDemo(rf, retriever, query, type, metric,
 						results);
 				currQuery++;
 			}
@@ -227,9 +257,13 @@ public class AutomatedRFTest {
 			}
 			
 			avgRFTIME /= numOfRFIterations*numOfQueries;
-			
 			System.out.println("AVG RF Iteration Time: "+avgRFTIME+" ms");
 			Utils.printToFile(outputfile, "<p>AVG RF Time "+avgRFTIME+" ms</p>");
+			System.out.println("absolute query time (only search): " + queryTime + "ms");
+			Utils.printToFile(outputfile, "<p>absolute query time (only search): " + queryTime + "ms</p>\n");
+			queryTime /= numOfQueries;
+			System.out.println("avg query time (only search): " + queryTime + "ms");
+			Utils.printToFile(outputfile, "<p>avg query time (only search): " + queryTime + "ms</p>\n");
 			
 		} catch (DocumentException | IOException e) {
 			e.printStackTrace();

@@ -15,6 +15,13 @@ public class WeightedEuclidean implements Metric {
 	/** The weights used. */
 	private double weights[] = null;
 
+	
+	/**
+	 * Constructor.
+	 */
+	public WeightedEuclidean() {
+		super();
+	}
 	/**
 	 * Constructor.
 	 */
