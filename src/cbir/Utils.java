@@ -1,5 +1,10 @@
 package cbir;
 
+/**
+ * A class which provides utility functions.
+ * 
+ * @author Chris Wendler
+ */
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +22,11 @@ import cbir.image.Image;
 
 public class Utils {
 
+	/**
+	 * 
+	 * @param filename
+	 * @param numbers
+	 */
 	public static void printIntListToFile(String filename, List<Integer> numbers) {
 		String message = "" + numbers.get(0);
 		for (int i = 1; i < numbers.size(); i++) {
@@ -25,6 +35,13 @@ public class Utils {
 		printToFile(filename, message);
 	}
 
+	/**
+	 * 
+	 * @param filename
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws IOException
+	 */
 	public static List<Integer> readIntListFromFile(String filename)
 			throws NumberFormatException, IOException {
 		LinkedList<Integer> values = new LinkedList<Integer>();
@@ -42,7 +59,14 @@ public class Utils {
 		return values;
 	}
 
-	public static RFAssistant createRFAssistant(String filename) throws IOException{
+	/**
+	 * 
+	 * @param filename
+	 * @return
+	 * @throws IOException
+	 */
+	public static RFAssistant createRFAssistant(String filename)
+			throws IOException {
 		LinkedList<String> positives = new LinkedList<String>();
 		LinkedList<String> negatives = new LinkedList<String>();
 		File file = new File(filename);
@@ -56,10 +80,11 @@ public class Utils {
 			String line;
 			/* parse positives and negatives */
 			while ((line = reader.readLine()) != null) {
-				String[] tokens = line.split(System.getProperty("line.separator"));
+				String[] tokens = line.split(System
+						.getProperty("line.separator"));
 				System.out.println(Arrays.toString(tokens));
 				for (String token : tokens) {
-					System.out.println(readPositives+"+-"+readNegatives);
+					System.out.println(readPositives + "+-" + readNegatives);
 					if (token.equals("positives")) {
 						System.out.println("read: positives");
 						readPositives = true;
@@ -74,21 +99,27 @@ public class Utils {
 					}
 					if (readPositives) {
 						positives.add(token);
-						System.out.println("read: "+token);
+						System.out.println("read: " + token);
 						continue;
 					}
 					if (readNegatives) {
 						negatives.add(token);
-						System.out.println("read: "+token);
+						System.out.println("read: " + token);
 						continue;
 					}
 				}
 			}
 			reader.close();
 		}
-		return new RFAssistant(positives,negatives);
+		return new RFAssistant(positives, negatives);
 	}
-	
+
+	/**
+	 * 
+	 * @param filename
+	 * @param query
+	 * @throws IOException
+	 */
 	public static void printQueryHits(String filename, Image query)
 			throws IOException {
 		List<String> positives = new LinkedList<String>();
@@ -117,6 +148,14 @@ public class Utils {
 		out.close();
 	}
 
+	/**
+	 * Writes a message into a file.
+	 * 
+	 * @param filename
+	 *            The path of the file.
+	 * @param message
+	 *            The message to be written.
+	 */
 	public static void printToFile(String filename, String message) {
 		File file = new File(filename);
 		FileWriter out;
@@ -131,11 +170,13 @@ public class Utils {
 	}
 
 	/**
-	 * calculates the scalar product of a and b
+	 * Calculates the scalar product of a and b.
 	 * 
 	 * @param a
+	 *            A double array.
 	 * @param b
-	 * @return scalar product
+	 *            A double array.
+	 * @returns The scalar product.
 	 */
 	public static double scalarProduct(double[] a, double[] b) {
 		double result = 0;
@@ -145,12 +186,15 @@ public class Utils {
 	}
 
 	/**
-	 * calculates the scalar product of a and b
+	 * Calculates the weighted scalar product of a and b.
 	 * 
 	 * @param a
+	 *            A double array.
 	 * @param b
+	 *            A double array.
 	 * @param weights
-	 * @return scalar product
+	 *            A weight array.
+	 * @returns The weighted scalar product.
 	 */
 	public static double scalarProduct(double[] a, double[] b, double[] weights) {
 		double result = 0;
@@ -160,10 +204,11 @@ public class Utils {
 	}
 
 	/**
-	 * calculates the euclidean norm of a vector
+	 * Calculates the euclidean norm of a vector.
 	 * 
 	 * @param a
-	 * @return euclidean norm
+	 *            A vector.
+	 * @returns The euclidean norm of the vector.
 	 */
 	public static double norm(double[] a) {
 		double result = 0;
@@ -174,11 +219,13 @@ public class Utils {
 	}
 
 	/**
-	 * calculates the euclidean norm of a vector
+	 * Calculates the weighted euclidean norm of a vector.
 	 * 
 	 * @param a
+	 *            A vector.
 	 * @param weights
-	 * @return euclidean norm
+	 *            A weight array.
+	 * @returns The weighted euclidean norm of the vector.
 	 */
 	public static double norm(double[] a, double[] weights) {
 		double result = 0;
@@ -202,6 +249,9 @@ public class Utils {
 		return result;
 	}
 
+	/**
+	 *  
+	 */
 	public static double[] doubleFromDouble(List<Double> values) {
 		double[] result = new double[values.size()];
 		for (int i = 0; i < values.size(); i++)

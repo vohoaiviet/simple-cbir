@@ -13,44 +13,48 @@ import java.util.List;
 import cbir.Utils;
 
 /**
- * A class which implements an image (jpeg...). An image has a filename, a Color
- * Histogram descriptor and a MPEG-EHD descriptor.
+ * A class which implements an image (jpeg...). An image has a filename, a list
+ * of descriptors, lists of positive and negative images marked during RF and an
+ * optional label.
  * 
- * @author Stanic Matej
+ * @author Matej Stanic
  * 
  */
 public class Image implements Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3920208288841347100L;
+	/** The path of the image. */
 	private final String filename;
+	/** A hash map of the descriptors of the image. */
 	private HashMap<DescriptorType, Descriptor> descriptors;
-	private HashMap<String, Double> scores;
-	private List<Image> positives = new LinkedList<Image>(),
-			negatives = new LinkedList<Image>();
+	/** List of positive images marked during RF */
+	private List<Image> positives = new LinkedList<Image>();
+	/** List of negative images marked during RF */
+	private List<Image> negatives = new LinkedList<Image>();
+	/** Label of a image when annotated databases are used */
 	private String label = null;
-
 	/**
-	 * a list to remember the order in which the descriptors have been merged to
+	 * A list to remember the order in which the descriptors have been merged to
 	 * be able to compute the weights.
 	 */
 	private List<DescriptorType> order = new LinkedList<DescriptorType>();
 
+	/**
+	 * Constructor of the Image class. Adds descriptors if specified.
+	 */
 	public Image(String filename, Descriptor... histograms) {
 		super();
 		this.filename = filename;
 		descriptors = new HashMap<DescriptorType, Descriptor>();
-		scores = new HashMap<String,Double>();
 		for (int i = 0; i < histograms.length; i++)
 			addDescriptor(histograms[i]);
 	}
 
 	/**
-	 * always add descriptors using this function to garantuee that the merged
-	 * descriptor is correct
+	 * Adds a descriptor to descriptor list of an image. (always add descriptors
+	 * using this function to garantuee that the merged descriptor is correct)
 	 * 
 	 * @param descriptor
+	 *            The descriptor to be added.
 	 */
 	public void addDescriptor(Descriptor descriptor) {
 		if (descriptors.size() > 0) {
@@ -67,6 +71,30 @@ public class Image implements Serializable {
 		order.add(descriptor.getType());
 	}
 
+	/**
+	 * Makes a deep copy of an object via "this"
+	 * 
+	 * @returns the deep copy
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public Image deepCopy() throws IOException, ClassNotFoundException {
+		// ObjectOutputStream erzeugen
+		ByteArrayOutputStream bufOutStream = new ByteArrayOutputStream();
+		ObjectOutputStream outStream = new ObjectOutputStream(bufOutStream);
+		// Objekt im byte-Array speichern
+		outStream.writeObject(this);
+		outStream.close();
+		// Pufferinhalt abrufen
+		byte[] buffer = bufOutStream.toByteArray();
+		// ObjectInputStream erzeugen
+		ByteArrayInputStream bufInStream = new ByteArrayInputStream(buffer);
+		ObjectInputStream inStream = new ObjectInputStream(bufInStream);
+		// Objekt wieder auslesen
+		Image deepCopy = (Image) inStream.readObject();
+		return deepCopy;
+	}
+
 	public String getFilename() {
 		return filename;
 	}
@@ -81,14 +109,6 @@ public class Image implements Serializable {
 
 	public Descriptor getDescriptor(DescriptorType type) {
 		return descriptors.get(type);
-	}
-
-	public Descriptor getColorHisto() {
-		return descriptors.get(DescriptorType.COLOR_HISTO);
-	}
-
-	public Descriptor getEdgeHisto() {
-		return descriptors.get(DescriptorType.MPEG_EHD);
 	}
 
 	public List<DescriptorType> getOrder() {
@@ -122,32 +142,5 @@ public class Image implements Serializable {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-
-	public Image deepCopy() throws IOException, ClassNotFoundException {
-		// ObjectOutputStream erzeugen
-		ByteArrayOutputStream bufOutStream = new ByteArrayOutputStream();
-		ObjectOutputStream outStream = new ObjectOutputStream(bufOutStream);
-		// Objekt im byte-Array speichern
-		outStream.writeObject(this);
-		outStream.close();
-		// Pufferinhalt abrufen
-		byte[] buffer = bufOutStream.toByteArray();
-		// ObjectInputStream erzeugen
-		ByteArrayInputStream bufInStream = new ByteArrayInputStream(buffer);
-		ObjectInputStream inStream = new ObjectInputStream(bufInStream);
-		// Objekt wieder auslesen
-		Image deepCopy = (Image) inStream.readObject();
-		return deepCopy;
-	}
-	
-	public Double getScore(String query) {
-		return scores.get(query);
-	}
-	
-	public void putScore(String query, Double score) {
-		scores.put(query, score);
-	}
-	
-	
 
 }
