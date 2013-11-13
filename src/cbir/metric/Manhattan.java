@@ -5,16 +5,16 @@ import cbir.image.Image;
 import cbir.interfaces.Metric;
 
 /**
- * Implements the gaussian metric.
+ * Implements the manhattan metric.
  * 
- * @author Chris Wendler
+ * @author Matej Stanic
  * 
  */
-public class Gaussian implements Metric {
+public class Manhattan implements Metric {
 
 	@Override
 	/**
-	 * Computes the gaussian distance between two images.
+	 * Computes the manhattan distance between two images.
 	 * 
 	 * @param a
 	 * 			An image.
@@ -27,8 +27,8 @@ public class Gaussian implements Metric {
 	public double distance(Image a, Image b, DescriptorType type) {
 		double dist = 0;
 		for (int i = 0; i < a.getDescriptor(type).getValues().length; i++)
-			dist += Math.pow(a.getDescriptor(type).getValues()[i]
-					- b.getDescriptor(type).getValues()[i], 2);
+			dist += Math.abs(a.getDescriptor(type).getValues()[i]
+					- b.getDescriptor(type).getValues()[i]);
 		dist = Math.sqrt(dist);
 		return dist;
 	}

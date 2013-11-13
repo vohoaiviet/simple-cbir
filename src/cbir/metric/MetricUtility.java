@@ -5,13 +5,26 @@ import java.util.List;
 import cbir.image.DescriptorType;
 import cbir.image.Image;
 
+/**
+ * Provides a function which initializes weights for the merged descriptor. Used
+ * for weighted cosine and weighted gaussian.
+ * 
+ * @author Chris Wendler
+ * 
+ */
 public class MetricUtility {
+
 	/**
-	 * initializes weights for the merged descriptor in order to weight each
+	 * Initializes weights for the merged descriptor in order to weight each
 	 * individual descriptor instead of each individual feature. FeatureWeight =
-	 * 1/(DescriptorAmount*CurrentDescriptorLength);
+	 * 1/(DescriptorAmount*CurrentDescriptorLength)
+	 * 
+	 * @param query
+	 *            the query image
+	 * @param type
+	 *            The descriptor type used.
 	 */
-	public static double [] initializeWeights(Image query, DescriptorType type) {
+	public static double[] initializeWeights(Image query, DescriptorType type) {
 		double[] weights = new double[query.getDescriptor(type).getValues().length];
 		if (type == DescriptorType.MERGED) {
 			List<DescriptorType> types = query.getOrder();
@@ -19,7 +32,8 @@ public class MetricUtility {
 			for (DescriptorType currType : types) {
 				int length = query.getDescriptor(currType).getValues().length;
 				for (int i = start; i < (start + length); i++)
-					weights[i] = (1.d / length) * ((double)weights.length / types.size());
+					weights[i] = (1.d / length)
+							* ((double) weights.length / types.size());
 				start += length;
 			}
 		} else

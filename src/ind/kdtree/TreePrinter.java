@@ -3,14 +3,32 @@ package ind.kdtree;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class which offers a function for computing string representations of
+ * trees. For testing purposes.
+ * 
+ * @author Matej Stanic
+ * 
+ */
 public class TreePrinter {
 
+	/**
+	 * Computes and returnes a string representation of a given tree.
+	 * 
+	 * @param tree
+	 *            Tree which has to be printed.
+	 * @returns A string representation of the tree or "Tree has no nodes." if
+	 *          the tree is empty.
+	 */
 	public static String getString(KDTree tree) {
 		if (tree.getRoot() == null)
 			return "Tree has no nodes.";
 		return getString(tree.getRoot(), "", true);
 	}
 
+	/**
+	 * A helper function.
+	 */
 	private static String getString(KDNode node, String prefix, boolean isTail) {
 		StringBuilder builder = new StringBuilder();
 

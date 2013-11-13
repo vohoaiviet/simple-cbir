@@ -5,13 +5,25 @@ import cbir.image.DescriptorType;
 import cbir.image.Image;
 import cbir.interfaces.Metric;
 
+/**
+ * Implements the cosine metric.
+ * 
+ * @author Chris Wendler
+ * 
+ */
 public class Cosine implements Metric {
 
 	@Override
 	/**
-	 * For cosine similarities resulting in a value of 0, the documents do not 
-	 * share any attributes (or words) because the angle between the objects is 
-	 * 90 degrees. 
+	 * Computes the cosine distance between two images.
+	 * 
+	 * @param a
+	 * 			An image.
+	 * @param b
+	 * 			An image.
+	 * @param type
+	 * 			The descriptor type of the image descriptors.
+	 * @returns the distance between image a and image b.
 	 */
 	public double distance(Image a, Image b, DescriptorType type) {
 		double result;

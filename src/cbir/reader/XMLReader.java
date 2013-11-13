@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -17,21 +16,23 @@ import cbir.image.Image;
 
 /**
  * A class which reads the name of an image and its descriptors from a given XML
- * file.
+ * file extracted by the tool img(rummager).
  * 
- * @author Stanic Matej
+ * @author Matej Stanic
  * 
  */
 public class XMLReader {
+	/** The image list that will be returned. */
 	private final List<Image> imageList = new LinkedList<Image>();
 
 	/**
 	 * Parses image information from a given XML file and returns a list of
-	 * images with their descriptors (MPEG_EHD & Color Histogram)
+	 * images with their descriptors (only MPEG_EHD and CEDD extracted by
+	 * img(rummager)).
 	 * 
 	 * @param file
-	 *            - the given XML file
-	 * @returns a list of images with their descriptors
+	 *            The given img(rummager) XML file.
+	 * @returns a list of images with their descriptors.
 	 * @throws DocumentException
 	 */
 	public List<Image> parseXMLFile(File file) throws DocumentException {
@@ -46,16 +47,18 @@ public class XMLReader {
 		// Iterate + get image paths + descriptors
 
 		// outer loop (Info, Data)
-		for (Iterator iter = rootElement.elementIterator(); iter.hasNext();) {
+		for (@SuppressWarnings("rawtypes")
+		Iterator iter = rootElement.elementIterator(); iter.hasNext();) {
 			Element element = (Element) iter.next();
 
 			// inner loop (Image Data)
-			for (Iterator innerIter = element.elementIterator(); innerIter
-					.hasNext();) {
+			for (@SuppressWarnings("rawtypes")
+			Iterator innerIter = element.elementIterator(); innerIter.hasNext();) {
 				Element innerElement = (Element) innerIter.next();
 
 				// data loop (Filename, EHD, RGB)
-				for (Iterator dataIter = innerElement.elementIterator(); dataIter
+				for (@SuppressWarnings("rawtypes")
+				Iterator dataIter = innerElement.elementIterator(); dataIter
 						.hasNext();) {
 
 					// get Filename
@@ -65,7 +68,8 @@ public class XMLReader {
 					while (dataIter.hasNext()) {
 						// get descriptors
 						dataElement = (Element) dataIter.next();
-						if (dataElement.getName().equals("EHD"))
+						if (dataElement.getName().equals("EHD")
+								|| dataElement.getName().equals("CEDD"))
 							descriptors.add(readDescriptor(dataElement));
 					}
 
@@ -100,19 +104,7 @@ public class XMLReader {
 						.parseInt(Character.toString(ehdChars[i]));
 			descriptor = new Descriptor(DescriptorType.MPEG_EHD, ehdValues, 9.d);
 
-			// Color Histo
-		} else if (descriptorType.equals("RGB")) {
-
-			StringTokenizer ColTokenizer = new StringTokenizer(
-					dataElement.getTextTrim(), "%");
-			int colCount = ColTokenizer.countTokens();
-			double[] colValues = new double[colCount];
-
-			for (int i = 0; i < colCount; i++)
-				colValues[i] = Integer.parseInt(ColTokenizer.nextToken());
-			descriptor = new Descriptor(DescriptorType.COLOR_HISTO, colValues,
-					255.d);
-
+			// CEDD
 		} else if (descriptorType.equals("CEDD")) {
 			char[] ceddChars = new char[144];
 			dataElement.getTextTrim().getChars(0, 144, ceddChars, 0);

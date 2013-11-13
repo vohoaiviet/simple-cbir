@@ -5,52 +5,90 @@ import cbir.image.DescriptorType;
 import cbir.image.Image;
 import cbir.interfaces.Metric;
 
-public class WeightedGaussian implements Metric{
+/**
+ * Implements the weighted gaussian metric.
+ * 
+ * @author Chris Wendler
+ * 
+ */
+public class WeightedGaussian implements Metric {
+	/** The weights used. */
+	private double weights[] = null;
+
 	/**
-	 * maybe change to a hashset of weight arrays for the different descriptors.
+	 * Constructor.
 	 */
-	private double weights [] = null;
-	
 	public WeightedGaussian(double[] weights) {
 		super();
 		this.weights = weights;
 	}
 
 	@Override
-	public double distance(Image a, Image b, DescriptorType type){
-		if(weights == null)
-			if(type == DescriptorType.MERGED)
-				initializeWeights(a,type);
+	/**
+	 * Computes the weighted gaussian distance between two images.
+	 * 
+	 * @param a
+	 * 			An image.
+	 * @param b
+	 * 			An image.
+	 * @param type
+	 * 			The descriptor type of the image descriptors.
+	 * @returns the distance between image a and image b.
+	 */
+	public double distance(Image a, Image b, DescriptorType type) {
+		if (weights == null)
+			if (type == DescriptorType.MERGED)
+				initializeWeights(a, type);
 			else
 				initializeWeights(a.getDescriptor(type).getValues().length);
-		return distance(a.getDescriptor(type),b.getDescriptor(type));
+		return distance(a.getDescriptor(type), b.getDescriptor(type));
 	}
-	
-	//@Override
+
+	/**
+	 * Computes the weighted gaussian distance between two descriptors.
+	 * 
+	 * @param a
+	 *            A descriptor.
+	 * @param b
+	 *            A descriptor.
+	 * @returns the distance between image a and image b.
+	 */
 	public double distance(Descriptor a, Descriptor b) {
 		double dist = 0;
-		if(weights == null)
+		if (weights == null)
 			initializeWeights(a.getValues().length);
-		
-		for(int i = 0; i < weights.length; i++)
-			dist += Math.pow(a.getValues()[i] - b.getValues()[i],2) * weights[i]; 
-		
+
+		for (int i = 0; i < weights.length; i++)
+			dist += Math.pow(a.getValues()[i] - b.getValues()[i], 2)
+					* weights[i];
+
 		dist = Math.sqrt(dist);
 		return dist;
 	}
-	
-	public void initializeWeights(int length){
-		if(weights == null){
+
+	/**
+	 * Initializes the weights with 1s.
+	 * 
+	 * @param length
+	 *            The length of the weight array.
+	 */
+	public void initializeWeights(int length) {
+		if (weights == null) {
 			weights = new double[length];
-			for(int i = 0; i < weights.length; i++)
+			for (int i = 0; i < weights.length; i++)
 				weights[i] = 1.d;
 		}
 	}
-	
+
 	/**
-	 * initializes weights for the merged descriptor in order to weight each
+	 * Initializes weights for the merged descriptor in order to weight each
 	 * individual descriptor instead of each individual feature. FeatureWeight =
-	 * 1/(DescriptorAmount*CurrentDescriptorLength);
+	 * 1/(DescriptorAmount*CurrentDescriptorLength)
+	 * 
+	 * @param query
+	 *            the query image
+	 * @param type
+	 *            The descriptor type used.
 	 */
 	public void initializeWeights(Image query, DescriptorType type) {
 		this.weights = MetricUtility.initializeWeights(query, type);
@@ -59,6 +97,5 @@ public class WeightedGaussian implements Metric{
 	public double[] getWeights() {
 		return weights;
 	}
-	
-	
+
 }

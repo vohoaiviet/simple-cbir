@@ -16,20 +16,31 @@ import cbir.interfaces.Metric;
 /**
  * Implements a k-d-tree and some essential functions.
  * 
- * @author Wendler Chris & Stanic Matej
+ * A k-d-tree is defined by a root node and by the descriptor type and
+ * dimensionality used. This class provides functions for constructing a
+ * k-d-tree, adding an image to a given tree, checking whether a tree contains a
+ * specified image, removing an image and a function for performing a nearest
+ * neighbor search.
+ * 
+ * @author Matej Stanic
  * 
  */
+
 public class KDTree {
 
+	/** Dimensionality of the node descriptor. */
 	private final int k;
+	/** Root node of the k-d-tree. */
 	private KDNode root;
+	/** Descriptor type used. */
 	private final DescriptorType type;
 
 	/**
-	 * Constructor.
+	 * Constructor. Constructs a k-d-tree out of a given list of images, the
+	 * descriptor type and dimensionality need also be specified.
 	 * 
 	 * @param list
-	 *            list of images to construct the tree of
+	 *            List of images to construct the tree of.
 	 */
 	public KDTree(List<Image> list, int k, DescriptorType type) {
 		this.k = k;
@@ -39,15 +50,15 @@ public class KDTree {
 	}
 
 	/**
-	 * Create nodes from a list of Images.
+	 * Create a k-d-tree from a list of Images.
 	 * 
 	 * @param list
-	 *            list of images
+	 *            List of images.
 	 * @param k
-	 *            the k of the tree
+	 *            Dimensionality of the used descriptors.
 	 * @param depth
-	 *            depth of the node
-	 * @returns the created node
+	 *            Depth of the node.
+	 * @returns The root node of the created k-d-tree.
 	 */
 	public KDNode createNode(List<Image> list, int k, int depth) {
 		// if list is empty return null as node
@@ -103,11 +114,11 @@ public class KDTree {
 	}
 
 	/**
-	 * Adds an image to the existing tree.
+	 * Adds an image node to the existing tree.
 	 * 
 	 * @param image
-	 *            image to add to the tree
-	 * @returns true if the image was successfully added.
+	 *            Image to add to the tree.
+	 * @returns True if the image was successfully added.
 	 */
 	public boolean add(Image image) {
 		// if image is null return false
@@ -156,11 +167,11 @@ public class KDTree {
 	}
 
 	/**
-	 * Checks whether the tree contains an image.
+	 * Checks whether the tree contains a specified image.
 	 * 
 	 * @param image
-	 *            image to search for
-	 * @returns true if the tree contains the image
+	 *            Image to search for.
+	 * @returns True if the tree contains the image.
 	 */
 	public boolean contains(Image image) {
 		if (image == null) {
@@ -177,8 +188,8 @@ public class KDTree {
 	 * Removes the first instance of an image.
 	 * 
 	 * @param image
-	 *            image to be removed
-	 * @returns true if the image was removed successfully
+	 *            Image to be removed.
+	 * @returns True if the image was removed successfully.
 	 */
 	public boolean remove(Image image) {
 
@@ -243,10 +254,10 @@ public class KDTree {
 	 * Locate an image in the tree.
 	 * 
 	 * @param tree
-	 *            tree to search
+	 *            Tree where the search is performed.
 	 * @param image
-	 *            image to search for
-	 * @returns node or null if not found
+	 *            Image to search for.
+	 * @returns Node which contains the image or null if not found.
 	 */
 	public KDNode getNode(KDTree tree, Image image) {
 		// return if tree is empty or image is null
@@ -284,11 +295,11 @@ public class KDTree {
 	}
 
 	/**
-	 * Get the subtree starting at root.
+	 * Gets the subtree (list of images) starting at a specified root.
 	 * 
 	 * @param root
-	 *            root of the tree to get nodes for
-	 * @returns a list of images of the subtree, root excluded
+	 *            Root of the tree to get nodes for.
+	 * @returns A list of images of the subtree, root excluded.
 	 */
 	public List<Image> getTree(KDNode root) {
 		List<Image> list = new ArrayList<Image>();
@@ -305,17 +316,17 @@ public class KDTree {
 	}
 
 	/**
-	 * Search for num nearest neighbors.
+	 * Search for a certain number of nearest neighbors.
 	 * 
 	 * @param num
-	 *            the number of nearest neighbors to be retrieved
+	 *            The number of nearest neighbors to be retrieved.
 	 * @param image
-	 *            image to find neighbors of
+	 *            Image to find neighbors of.
 	 * @param metric
-	 *            metric used for finding neighbors
+	 *            Metric used for finding neighbors.
 	 * @param type
-	 *            descriptor type which is considered
-	 * @returns a list of the num nearest neighbors, null if image is null
+	 *            Descriptor type which is considered.
+	 * @returns A list of the num nearest neighbors, null if image is null.
 	 */
 	public List<Image> nearestNeighborSearch(int num, final Image image,
 			final Metric metric, final DescriptorType type) {
@@ -380,7 +391,17 @@ public class KDTree {
 	}
 
 	/**
-	 * Helper function for nearest neighbor search.
+	 * Helper function for the nearest neighbor search.
+	 * 
+	 * The algorithm checks whether there could be any points on the other side
+	 * of the splitting plane that are closer to the search point than the
+	 * current best. In concept, this is done by intersecting the splitting
+	 * hyperplane with a hypersphere around the search point that has a radius
+	 * equal to the current nearest distance. Since the hyperplanes are all
+	 * axis-aligned this is implemented as a simple comparison to see whether
+	 * the difference between the splitting coordinate of the search point and
+	 * current node is less than the distance (overall coordinates) from the
+	 * search point to the current best.
 	 * 
 	 */
 	private static final void searchNode(Image image, KDNode node, int num,
@@ -408,7 +429,6 @@ public class KDTree {
 			if (results.size() == num && lastNode != null)
 				results.remove(lastNode);
 			results.add(node);
-			// TODO should be ok
 			// if the distances are equal, insert
 		} else if (nodeDistance == lastDistance) {
 			results.add(node);
@@ -427,33 +447,17 @@ public class KDTree {
 		KDNode lesser = node.getLesser();
 		KDNode greater = node.getGreater();
 
-		// The algorithm checks whether there could be any points on the other
-		// side of the splitting plane that are closer to the search point than
-		// the current best. In concept, this is done by intersecting the
-		// splitting hyperplane with a hypersphere around the search point that
-		// has a radius equal to the current nearest distance. Since the
-		// hyperplanes are all axis-aligned this is implemented as a simple
-		// comparison to see whether the difference between the splitting
-		// coordinate of the search point and current node is less than the
-		// distance (overall coordinates) from the search point to the current
-		// best.
 		if (lesser != null && !examined.contains(lesser)) {
 			examined.add(lesser);
 
 			double p1 = Double.MIN_VALUE;
 			double p2 = Double.MIN_VALUE;
 
-			// p1 =
-			// Math.abs(node.getImage().getDescriptor(type).getValues()[dim]
-			// - image.getDescriptor(type).getValues()[dim]);
-			// boolean lineIntersectsCube = ((p1 <= lastDistance) ? true :
-			// false);
 			p1 = node.getImage().getDescriptor(type).getValues()[dim];
 			p2 = image.getDescriptor(type).getValues()[dim] - lastDistance;
 			boolean lineIntersectsCube = ((p2 <= p1) ? true : false);
 
 			// Continue down lesser branch
-			// TODO test if always true & old version
 			if (lineIntersectsCube) {
 				searchNode(image, lesser, num, results, examined, type, metric);
 			}
@@ -465,12 +469,6 @@ public class KDTree {
 
 			double p1 = Double.MIN_VALUE;
 			double p2 = Double.MIN_VALUE;
-
-			// p1 =
-			// Math.abs(node.getImage().getDescriptor(type).getValues()[dim]
-			// - image.getDescriptor(type).getValues()[dim]);
-			// boolean lineIntersectsCube = ((p1 <= lastDistance) ? true :
-			// false);
 
 			p1 = node.getImage().getDescriptor(type).getValues()[dim];
 			p2 = image.getDescriptor(type).getValues()[dim] + lastDistance;

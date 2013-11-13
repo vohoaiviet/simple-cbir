@@ -4,26 +4,29 @@ import cbir.image.DescriptorType;
 import cbir.image.Image;
 
 /**
- * Implements a node of a k-d-tree. Every node has a point (image), a dimension (k), a depth, a descriptor type 
- * and references to the parent and the child nodes.
+ * Implements a node of a k-d-tree. Every node has a point (image), a dimension
+ * (k), a depth, a descriptor type and references to the parent and the child
+ * nodes.
  * 
- * @author Wendler Chris
- * @author Stanic Matej
+ * This class offers overridden compareTo and equals functions.
+ * 
+ * @author Matej Stanic
  */
+
 public class KDNode implements Comparable<KDNode> {
-	/** dimension of the node descriptor */
+	/** Dimensionality of the node descriptor. */
 	private int k;
-	/** depth of the node point */
+	/** The depth of the node point. */
 	private int depth;
-	/** image contained in the node*/
+	/** The image which is contained in the node. */
 	private Image image = null;
-	/** descriptor type of the node descriptor */
+	/** The descriptor type of the node descriptor. */
 	private DescriptorType type;
-	/** parent node */
+	/** The parent node. */
 	private KDNode parent = null;
-	/** left child node */
+	/** The left child node. */
 	private KDNode lesser = null;
-	/** right child node */
+	/** The right child node. */
 	private KDNode greater = null;
 
 	/**
@@ -45,17 +48,19 @@ public class KDNode implements Comparable<KDNode> {
 	}
 
 	/**
-	 * Compares the values of the actual splitting coordinate of two node descriptors.
+	 * Compares the values of the actual splitting coordinate of two node
+	 * descriptors.
+	 * 
 	 * @param depth
-	 * 			the depth of the actual node
+	 *            The depth of the actual node.
 	 * @param k
-	 * 			the dimension of the actual node descriptor 
+	 *            The dimensionality of the actual node descriptor.
 	 * @param image1
-	 * 			the actual node image
+	 *            The actual node image.
 	 * @param image2
-	 * 			the node image which is compared to
+	 *            The node image which is compared.
 	 * @param type
-	 * 			the descriptor type
+	 *            The descriptor type used.
 	 * @return
 	 */
 	public static int compareTo(int depth, int k, Image image1, Image image2,
@@ -71,10 +76,11 @@ public class KDNode implements Comparable<KDNode> {
 	}
 
 	/**
-	 * Compares the values of the actual splitting coordinate of a specified node descriptor 
-	 * to the actual node descriptor.
+	 * Compares the values of the actual splitting coordinate of a specified
+	 * node descriptor to the actual node descriptor.
+	 * 
 	 * @param node
-	 * 			the node that is compared with the actual node.
+	 *            The node that is compared with the actual node.
 	 */
 	@Override
 	public int compareTo(KDNode node) {

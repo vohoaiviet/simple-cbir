@@ -11,12 +11,21 @@ import cbir.image.Image;
 import cbir.reader.FireReader;
 import cbir.reader.XMLReader;
 
+/**
+ * A class for testing and debugging the k-d-tree. The path to the descriptor
+ * XML file has to be specified in "xml_path". For testing purposes.
+ * 
+ * @author Matej Stanic
+ * 
+ */
 public class KDTreeTest {
 
 	public static void main(String args[]) {
 		try {
-			List<Image> database = new XMLReader().parseXMLFile(new File(
-					"C:\\Users\\Stanic\\Desktop\\lentos_color_ehd_2.xml"));
+			File xml_path = new File(
+					"C:\\Users\\Stanic\\Desktop\\lentos_color_ehd_2.xml");
+
+			List<Image> database = new XMLReader().parseXMLFile(xml_path);
 
 			new FireReader().readDescriptors(database,
 					DescriptorType.COLOR_HISTO);
@@ -42,10 +51,8 @@ public class KDTreeTest {
 			System.out.println("contains 19?: "
 					+ tree.contains(database.get(18)));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
