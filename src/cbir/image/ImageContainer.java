@@ -75,7 +75,7 @@ public class ImageContainer implements Serializable {
 	/**
 	 * Makes a deep copy of an object via "this"
 	 * 
-	 * @returns the deep copy
+	 * @return the deep copy
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */

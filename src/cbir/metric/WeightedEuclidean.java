@@ -58,7 +58,7 @@ public class WeightedEuclidean implements Metric {
 	 *            A descriptor.
 	 * @param b
 	 *            A descriptor.
-	 * @returns the distance between image a and image b.
+	 * @return the distance between image a and image b.
 	 */
 	public double distance(Descriptor a, Descriptor b) {
 		double dist = 0;

@@ -17,7 +17,7 @@ public class TreePrinter {
 	 * 
 	 * @param tree
 	 *            Tree which has to be printed.
-	 * @returns A string representation of the tree or "Tree has no nodes." if
+	 * @return A string representation of the tree or "Tree has no nodes." if
 	 *          the tree is empty.
 	 */
 	public static String getString(KDTree tree) {

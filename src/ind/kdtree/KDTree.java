@@ -58,7 +58,7 @@ public class KDTree {
 	 *            Dimensionality of the used descriptors.
 	 * @param depth
 	 *            Depth of the node.
-	 * @returns The root node of the created k-d-tree.
+	 * @return The root node of the created k-d-tree.
 	 */
 	public KDNode createNode(List<ImageContainer> list, int k, int depth) {
 		// if list is empty return null as node
@@ -118,7 +118,7 @@ public class KDTree {
 	 * 
 	 * @param image
 	 *            Image to add to the tree.
-	 * @returns True if the image was successfully added.
+	 * @return True if the image was successfully added.
 	 */
 	public boolean add(ImageContainer image) {
 		// if image is null return false
@@ -171,7 +171,7 @@ public class KDTree {
 	 * 
 	 * @param image
 	 *            Image to search for.
-	 * @returns True if the tree contains the image.
+	 * @return True if the tree contains the image.
 	 */
 	public boolean contains(ImageContainer image) {
 		if (image == null) {
@@ -189,7 +189,7 @@ public class KDTree {
 	 * 
 	 * @param image
 	 *            Image to be removed.
-	 * @returns True if the image was removed successfully.
+	 * @return True if the image was removed successfully.
 	 */
 	public boolean remove(ImageContainer image) {
 
@@ -257,7 +257,7 @@ public class KDTree {
 	 *            Tree where the search is performed.
 	 * @param image
 	 *            Image to search for.
-	 * @returns Node which contains the image or null if not found.
+	 * @return Node which contains the image or null if not found.
 	 */
 	public KDNode getNode(KDTree tree, ImageContainer image) {
 		// return if tree is empty or image is null
@@ -299,7 +299,7 @@ public class KDTree {
 	 * 
 	 * @param root
 	 *            Root of the tree to get nodes for.
-	 * @returns A list of images of the subtree, root excluded.
+	 * @return A list of images of the subtree, root excluded.
 	 */
 	public List<ImageContainer> getTree(KDNode root) {
 		List<ImageContainer> list = new ArrayList<ImageContainer>();
@@ -326,7 +326,7 @@ public class KDTree {
 	 *            Metric used for finding neighbors.
 	 * @param type
 	 *            Descriptor type which is considered.
-	 * @returns A list of the num nearest neighbors, null if image is null.
+	 * @return A list of the num nearest neighbors, null if image is null.
 	 */
 	public List<ImageContainer> nearestNeighborSearch(int num, final ImageContainer image,
 			final Metric metric, final DescriptorType type) {

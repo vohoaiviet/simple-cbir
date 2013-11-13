@@ -32,7 +32,7 @@ public class XMLReader {
 	 * 
 	 * @param file
 	 *            The given img(rummager) XML file.
-	 * @returns a list of images with their descriptors.
+	 * @return a list of images with their descriptors.
 	 * @throws DocumentException
 	 */
 	public List<ImageContainer> parseXMLFile(File file) throws DocumentException {

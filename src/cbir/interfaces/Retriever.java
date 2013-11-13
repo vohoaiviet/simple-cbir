@@ -31,7 +31,7 @@ public interface Retriever {
 	
 	/**
 	 * Queries for an image with a specific name.
-	 * @param filename of the image.
+	 * @param name of the image.
 	 * @return The image object with the given filename or null if not found.
 	 */
 	public ImageContainer getImageByName(String name);

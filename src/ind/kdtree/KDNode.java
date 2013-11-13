@@ -61,7 +61,8 @@ public class KDNode implements Comparable<KDNode> {
 	 *            The node image which is compared.
 	 * @param type
 	 *            The descriptor type used.
-	 * @return
+	 * @return -1 if descriptor1[dim] is smaller than descriptor2[dim]
+	 * 0 if they are the same and 1 if descriptor1[dim] is bigger than descriptor2[dim].
 	 */
 	public static int compareTo(int depth, int k, ImageContainer image1, ImageContainer image2,
 			DescriptorType type) {

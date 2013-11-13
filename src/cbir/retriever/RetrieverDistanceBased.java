@@ -81,7 +81,7 @@ public class RetrieverDistanceBased implements Retriever{
 
 	/**
 	 * Queries for an image with a specific name.
-	 * @param filename of the image.
+	 * @param name the filename of the image.
 	 * @return The image object with the given filename or null if not found.
 	 */
 	@Override

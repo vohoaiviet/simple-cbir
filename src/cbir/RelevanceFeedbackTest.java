@@ -61,16 +61,16 @@ public class RelevanceFeedbackTest {
 	/**
 	 * This is a demo implementation of a relevance feedback iteration. usage: *
 	 * for each rf iteration you need to specify the indices of the relevant and
-	 * irrelevant images * there are several commands that the demo user
-	 * interface accepts: * * "others": this command has to be entered when the
+	 * irrelevant images. There are several commands that the demo user
+	 * interface accepts: "others": this command has to be entered when the
 	 * program asks for irrelevant images, by entering "others" all images that
-	 * are not marked as relevant are considered as irrelevant. * "all": this
+	 * are not marked as relevant are considered as irrelevant. "all": this
 	 * command has to be entered when the program asks for relevant images. This
-	 * means that all images are considered as positive. * "assist": this
+	 * means that all images are considered as positive. "assist": this
 	 * command has to be entered when the program asks for relevant images,
 	 * after assist you have to specify the file name of the file that contains
 	 * the already marked images. IMPORTANT: you still have to mark the positive images in the same line. 
-	 * * "quit": this command has to be entered when the program asks
+	 * "quit": this command has to be entered when the program asks
 	 * for relevant images, and causes the rf demo to stop, so the next query
 	 * can be performed. After stop you can specify a filename where the marked images should be
 	 * saved, this is needed when you want to use the assistant function in the future.

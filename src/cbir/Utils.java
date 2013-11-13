@@ -87,7 +87,7 @@ public class Utils {
 	 *            A double array.
 	 * @param b
 	 *            A double array.
-	 * @returns The scalar product.
+	 * @return The scalar product.
 	 */
 	public static double scalarProduct(double[] a, double[] b) {
 		double result = 0;
@@ -105,7 +105,7 @@ public class Utils {
 	 *            A double array.
 	 * @param weights
 	 *            A weight array.
-	 * @returns The weighted scalar product.
+	 * @return The weighted scalar product.
 	 */
 	public static double scalarProduct(double[] a, double[] b, double[] weights) {
 		double result = 0;
@@ -119,7 +119,7 @@ public class Utils {
 	 * 
 	 * @param a
 	 *            A vector.
-	 * @returns The euclidean norm of the vector.
+	 * @return The euclidean norm of the vector.
 	 */
 	public static double norm(double[] a) {
 		double result = 0;
@@ -136,7 +136,7 @@ public class Utils {
 	 *            A vector.
 	 * @param weights
 	 *            A weight array.
-	 * @returns The weighted euclidean norm of the vector.
+	 * @return The weighted euclidean norm of the vector.
 	 */
 	public static double norm(double[] a, double[] weights) {
 		double result = 0;
@@ -173,7 +173,8 @@ public class Utils {
 
 	/**
 	 * Convert a list of Double objects to an array of double values.
-	 * @param the list of Double object that should be converted.
+	 * @param values the list of Double object that should be converted.
+	 * @return the double array.
 	 */
 	public static double[] doubleFromDouble(List<Double> values) {
 		double[] result = new double[values.size()];

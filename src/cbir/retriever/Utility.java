@@ -19,9 +19,8 @@ import cbir.image.ImageContainer;
 public class Utility {
 	
 	/**
-	 * Finds the "amount" nearest neighbors of the given image.
-	 * @param image the query image.
-	 * @param type the descriptor type of interest.
+	 * Finds the "amount" nearest neighbors of the given image (defined in the comparator).
+	 * @param database the list of images that represents the database.
 	 * @param amount the desired amount of nearest neighbors.
 	 * @param comparator the comparator which is used to compare images.
 	 * @return The list of the nearest neighbors.
@@ -93,7 +92,7 @@ public class Utility {
 	/**
 	 * Queries for an image with a specific name.
 	 * @param database the database in which the lookup is performed.
-	 * @param filename of the image.
+	 * @param name is the filename of the image.
 	 * @return The image object with the given filename or null if not found.
 	 */
 	public static ImageContainer getImageByName(List<ImageContainer> database, String name) {
