@@ -20,7 +20,7 @@ import cbir.image.Image;
  *   delimiter is used it has to be located in front of the data part. 
  * * The histogram files have to be compressed using gzip.
  * * The histograms have to contain the delimiter "data" followed by an arbitrary amount of
- *   double values.
+ *   double values separated by spaces.
  * * The descriptors have to be located in the image directory.
  * @author Chris Wendler
  */

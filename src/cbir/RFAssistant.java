@@ -1,6 +1,16 @@
 package cbir;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import cbir.image.Image;
@@ -29,6 +39,95 @@ public class RFAssistant {
 		this.negatives = negatives;
 	}
 	
+	
+	/**
+	 * Creates a RFAssistant object from a given file containing the known marked images.
+	 * @param filename the filename of the file containing the filenames of the marked images.
+	 * @return a RF assistant object is returned.
+	 * @throws IOException if the file is not found.
+	 */
+	public static RFAssistant createRFAssistant(String filename)
+			throws IOException {
+		LinkedList<String> positives = new LinkedList<String>();
+		LinkedList<String> negatives = new LinkedList<String>();
+		File file = new File(filename);
+		if (file.exists()) {
+			boolean readPositives = false;
+			boolean readNegatives = false;
+			System.out.println(filename + " exists");
+			InputStream fileStream = new FileInputStream(file);
+			Reader decoder = new InputStreamReader(fileStream);
+			BufferedReader reader = new BufferedReader(decoder);
+			String line;
+			/* parse positives and negatives */
+			while ((line = reader.readLine()) != null) {
+				String[] tokens = line.split(System
+						.getProperty("line.separator"));
+				System.out.println(Arrays.toString(tokens));
+				for (String token : tokens) {
+					System.out.println(readPositives + "+-" + readNegatives);
+					if (token.equals("positives")) {
+						System.out.println("read: positives");
+						readPositives = true;
+						readNegatives = false;
+						continue;
+					}
+					if (token.equals("negatives")) {
+						System.out.println("read: negatives");
+						readPositives = false;
+						readNegatives = true;
+						continue;
+					}
+					if (readPositives) {
+						positives.add(token);
+						System.out.println("read: " + token);
+						continue;
+					}
+					if (readNegatives) {
+						negatives.add(token);
+						System.out.println("read: " + token);
+						continue;
+					}
+				}
+			}
+			reader.close();
+		}
+		return new RFAssistant(positives, negatives);
+	}
+
+	/**
+	 * Prints all marked images from a given query to a given outputfile.
+	 * @param filename the name of the outputfile.
+	 * @param query the query image of which the marked positives/negatives should be stored.
+	 * @throws IOException is thrown if there is a problem with creating the file.
+	 */
+	public static void printQueryHits(String filename, Image query)
+			throws IOException {
+		List<String> positives = new LinkedList<String>();
+		List<String> negatives = new LinkedList<String>();
+		File file = new File(filename);
+		if (file.exists()) {
+			RFAssistant assi = createRFAssistant(filename);
+			positives = assi.getPositives();
+			negatives = assi.getNegatives();
+		}
+		for (Image curr : query.getPositives())
+			if (!positives.contains(curr.getFilename()))
+				positives.add(curr.getFilename());
+		for (Image curr : query.getNegatives())
+			if (!negatives.contains(curr.getFilename()))
+				negatives.add(curr.getFilename());
+
+		FileWriter out = new FileWriter(file, false);
+		out.write("positives" + System.getProperty("line.separator"));
+
+		for (String curr : positives)
+			out.write(curr + System.getProperty("line.separator"));
+		out.write("negatives" + System.getProperty("line.separator"));
+		for (String curr : negatives)
+			out.write(curr + System.getProperty("line.separator"));
+		out.close();
+	}
 	
 	/**
 	 * Revises the new positive/negative labeled images form the user, when there are inconsistencies compared to the already
