@@ -31,31 +31,39 @@ import cbir.retriever.RetrieverDistanceBased;
  */
 public class RelevanceFeedbackTest {
 	/** The folder where the resulting html file will be stored. **/
-	public static String resultFolder = "C:\\Users\\Chris\\Desktop\\";
-	/** The name of the output-file can be specified here.**/
-	public static String outputfile = resultFolder + "livedemo_cars.html";
+	public static String resultFolder = "C:\\Users\\Stanic\\Desktop\\CorelDB\\";
+	/** The name of the output-file can be specified here. **/
+	public static String outputfile = resultFolder + "manual_corel_cedd.html";
 	/** The metric that is used for the ranking. **/
 	public static Metric metric = new WeightedEuclidean();
 	/** The descriptor-type of interest for the ranking. **/
-	public static DescriptorType type = DescriptorType.MERGED;
-	/** The normalization that is used on the descriptor of interest, this is important for the
-	 *  merged descriptor!**/
-	public static Normalization normalization = Normalization.GAUSSIAN_0to1;
+	public static DescriptorType type = DescriptorType.CEDD;
+	/**
+	 * The normalization that is used on the descriptor of interest, this is
+	 * important for the merged descriptor!
+	 **/
+	public static Normalization normalization = Normalization.GAUSSIAN;
 	/** The path of the xml file containing the descriptors for your database. **/
 	public static File xml_path = new File(
-			"C:\\MBOX\\signed_all\\lentos_color_ehd_2.xml");
+			"C:\\Users\\Stanic\\Desktop\\CorelDB\\cedd_descriptors.xml");
 	/** Indicates whether you want to use indexing or not. **/
 	public static boolean useIndexing = false;
 	/**
 	 * Alternatively you can add all the types that you want to index into this
-	 * array manually. (care that if you set useIndexing true the element on position 0 will get
-	 * overwritten)
+	 * array manually. (care that if you set useIndexing true the element on
+	 * position 0 will get overwritten)
 	 **/
-	public static DescriptorType [] indexingFor;
-	/** The relevance feedback method that should be used has to be specified here. **/
+	public static DescriptorType[] indexingFor;
+	/**
+	 * The relevance feedback method that should be used has to be specified
+	 * here.
+	 **/
 	public static RelevanceFeedback rf = new Bayesian();
-	/** For this test you can change the amount of random queries that is performed here,
-	 *  if you want to use your own query images you have to rewrite the main method. **/
+	/**
+	 * For this test you can change the amount of random queries that is
+	 * performed here, if you want to use your own query images you have to
+	 * rewrite the main method.
+	 **/
 	public static int queryAmount = 5;
 
 	/**
@@ -66,14 +74,15 @@ public class RelevanceFeedbackTest {
 	 * program asks for irrelevant images, by entering "others" all images that
 	 * are not marked as relevant are considered as irrelevant. "all": this
 	 * command has to be entered when the program asks for relevant images. This
-	 * means that all images are considered as positive. "assist": this
-	 * command has to be entered when the program asks for relevant images,
-	 * after assist you have to specify the file name of the file that contains
-	 * the already marked images. IMPORTANT: you still have to mark the positive images in the same line. 
-	 * "quit": this command has to be entered when the program asks
-	 * for relevant images, and causes the rf demo to stop, so the next query
-	 * can be performed. After stop you can specify a filename where the marked images should be
-	 * saved, this is needed when you want to use the assistant function in the future.
+	 * means that all images are considered as positive. "assist": this command
+	 * has to be entered when the program asks for relevant images, after assist
+	 * you have to specify the file name of the file that contains the already
+	 * marked images. IMPORTANT: you still have to mark the positive images in
+	 * the same line. "quit": this command has to be entered when the program
+	 * asks for relevant images, and causes the rf demo to stop, so the next
+	 * query can be performed. After stop you can specify a filename where the
+	 * marked images should be saved, this is needed when you want to use the
+	 * assistant function in the future.
 	 * 
 	 * @param rf
 	 *            the relevance feedback method that is used.
@@ -89,8 +98,8 @@ public class RelevanceFeedbackTest {
 	 *            the result list of the previous iteration.
 	 */
 	public static void relevanceFeedbackDemo(RelevanceFeedback rf,
-			RetrieverDistanceBased retriever, ImageContainer query, DescriptorType type,
-			Metric metric, List<ImageContainer> result) {
+			RetrieverDistanceBased retriever, ImageContainer query,
+			DescriptorType type, Metric metric, List<ImageContainer> result) {
 		List<ImageContainer> positives;
 		List<ImageContainer> negatives;
 		BufferedReader stdin = new BufferedReader(new InputStreamReader(
@@ -202,11 +211,14 @@ public class RelevanceFeedbackTest {
 			long starttime, endtime;
 			starttime = System.currentTimeMillis();
 
-			List<ImageContainer> database = new XMLReader().parseXMLFile(xml_path);
+			List<ImageContainer> database = new XMLReader()
+					.parseXMLFile(xml_path);
 
 			LabelUtils.labelDatabase(database);
-			new FireReader().readDescriptors(database,
-					DescriptorType.COLOR_HISTO);
+			if (type.equals(DescriptorType.COLOR_HISTO)
+					|| type.equals(DescriptorType.MERGED))
+				new FireReader().readDescriptors(database,
+						DescriptorType.COLOR_HISTO);
 
 			endtime = System.currentTimeMillis();
 			Utils.printToFile(outputfile, "<p>read descriptors: "
@@ -223,17 +235,16 @@ public class RelevanceFeedbackTest {
 			starttime = endtime;
 
 			// Add indexing here
-			if (useIndexing){
+			if (useIndexing) {
 				indexingFor = new DescriptorType[1];
 				indexingFor[0] = type;
 			}
 			RetrieverDistanceBased retriever;
-			if(indexingFor != null)
-				retriever = new RetrieverDistanceBased(
-						database, metric, indexingFor);
+			if (indexingFor != null)
+				retriever = new RetrieverDistanceBased(database, metric,
+						indexingFor);
 			else
-				retriever = new RetrieverDistanceBased(
-						database, metric);
+				retriever = new RetrieverDistanceBased(database, metric);
 
 			endtime = System.currentTimeMillis();
 			Utils.printToFile(outputfile, "<p>indexing: "
@@ -242,9 +253,10 @@ public class RelevanceFeedbackTest {
 
 			List<ImageContainer> queries = new LinkedList<ImageContainer>();
 			try {
-				for(int i = 0; i < queryAmount; i++){
+				for (int i = 0; i < queryAmount; i++) {
 					Random rand = new Random();
-					queries.add(database.get(rand.nextInt(database.size())).deepCopy());
+					queries.add(database.get(rand.nextInt(database.size()))
+							.deepCopy());
 				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
@@ -252,7 +264,8 @@ public class RelevanceFeedbackTest {
 
 			for (ImageContainer query : queries) {
 				starttime = System.currentTimeMillis();
-				List<ImageContainer> results = retriever.search(query, type, 20);
+				List<ImageContainer> results = retriever
+						.search(query, type, 20);
 				retriever.printResultListHTML(results, type, outputfile);
 				endtime = System.currentTimeMillis();
 				Utils.printToFile(outputfile, "<p> query: "
