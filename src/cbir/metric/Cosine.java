@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2013 Justus Piater,
+ * Intelligent and Interactive Systems Group,
+ * University of Innsbruck, Austria.
+ */
 package cbir.metric;
 
 import cbir.Utils;
@@ -25,7 +30,8 @@ public class Cosine implements Metric {
 	 * 			The descriptor type of the image descriptors.
 	 * @returns the distance between image a and image b.
 	 */
-	public double distance(ImageContainer a, ImageContainer b, DescriptorType type) {
+	public double distance(ImageContainer a, ImageContainer b,
+			DescriptorType type) {
 		double result;
 		double[] vectorA = a.getDescriptor(type).getValues();
 		double[] vectorB = b.getDescriptor(type).getValues();

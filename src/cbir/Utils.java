@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2013 Justus Piater,
+ * Intelligent and Interactive Systems Group,
+ * University of Innsbruck, Austria.
+ */
 package cbir;
 
 /**
@@ -24,8 +29,11 @@ public class Utils {
 
 	/**
 	 * Prints a list of integers to a given outputfile.
-	 * @param filename the name of the destination file.
-	 * @param numbers the numbers that should be written into the file.
+	 * 
+	 * @param filename
+	 *            the name of the destination file.
+	 * @param numbers
+	 *            the numbers that should be written into the file.
 	 */
 	public static void printIntListToFile(String filename, List<Integer> numbers) {
 		String message = "" + numbers.get(0);
@@ -37,10 +45,14 @@ public class Utils {
 
 	/**
 	 * Reads a list of integers separated by spaces.
-	 * @param filename the name of the file containing the numbers.
+	 * 
+	 * @param filename
+	 *            the name of the file containing the numbers.
 	 * @return a list of read integers.
-	 * @throws NumberFormatException is thrown if a token is not parsable to an integer.
-	 * @throws IOException is thrown if the input file is not found.
+	 * @throws NumberFormatException
+	 *             is thrown if a token is not parsable to an integer.
+	 * @throws IOException
+	 *             is thrown if the input file is not found.
 	 */
 	public static List<Integer> readIntListFromFile(String filename)
 			throws NumberFormatException, IOException {
@@ -58,7 +70,6 @@ public class Utils {
 		reader.close();
 		return values;
 	}
-
 
 	/**
 	 * Writes a message into a file.
@@ -148,8 +159,11 @@ public class Utils {
 
 	/**
 	 * Calculates the logarithm of x to the base "base".
-	 * @param x is the number for which the logarithm is computed.
-	 * @param base is the base of the logarithm.
+	 * 
+	 * @param x
+	 *            is the number for which the logarithm is computed.
+	 * @param base
+	 *            is the base of the logarithm.
 	 * @return The logarithm of x to the given base.
 	 */
 	public static double LogBaseX(double x, double base) {
@@ -158,6 +172,7 @@ public class Utils {
 
 	/**
 	 * Returns the suffix of the descriptor files of a given descriptor-type.
+	 * 
 	 * @param type
 	 * @return a string containing the suffix.
 	 */
@@ -173,7 +188,9 @@ public class Utils {
 
 	/**
 	 * Convert a list of Double objects to an array of double values.
-	 * @param values the list of Double object that should be converted.
+	 * 
+	 * @param values
+	 *            the list of Double object that should be converted.
 	 * @return the double array.
 	 */
 	public static double[] doubleFromDouble(List<Double> values) {
@@ -185,8 +202,11 @@ public class Utils {
 
 	/**
 	 * Concatenates two double arrays.
-	 * @param merged the first array.
-	 * @param is the second array.
+	 * 
+	 * @param merged
+	 *            the first array.
+	 * @param is
+	 *            the second array.
 	 * @return the concatanated array.
 	 */
 	public static double[] concat(double[] merged, double[] is) {

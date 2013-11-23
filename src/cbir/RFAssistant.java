@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2013 Justus Piater,
+ * Intelligent and Interactive Systems Group,
+ * University of Innsbruck, Austria.
+ */
 package cbir;
 
 import java.io.BufferedReader;
@@ -14,11 +19,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cbir.image.ImageContainer;
+
 /**
- * This class provides a RFAssistant that is supposed to help the poor guy who has to evaluate
- * different relevance feedback mechanisms by hand. The RFAssistant maintains lists of positve images and
- * negative images for a specific query that are already known and corrects the user if he
- * is tired and does inconsistent marking. 
+ * This class provides a RFAssistant that is supposed to help the poor guy who
+ * has to evaluate different relevance feedback mechanisms by hand. The
+ * RFAssistant maintains lists of positve images and negative images for a
+ * specific query that are already known and corrects the user if he is tired
+ * and does inconsistent marking.
  * 
  * @author Chris Wendler
  * 
@@ -28,23 +35,30 @@ public class RFAssistant {
 	public List<String> positives;
 	/** The list of known negative images for one specific query image. **/
 	public List<String> negatives;
-	
+
 	/**
 	 * The constructor.
-	 * @param positives is the list of known positive images for a query image.
-	 * @param negatives is the list of known negative images for a query image.
+	 * 
+	 * @param positives
+	 *            is the list of known positive images for a query image.
+	 * @param negatives
+	 *            is the list of known negative images for a query image.
 	 */
-	public RFAssistant(List<String> positives, List<String> negatives){
+	public RFAssistant(List<String> positives, List<String> negatives) {
 		this.positives = positives;
 		this.negatives = negatives;
 	}
-	
-	
+
 	/**
-	 * Creates a RFAssistant object from a given file containing the known marked images.
-	 * @param filename the filename of the file containing the filenames of the marked images.
+	 * Creates a RFAssistant object from a given file containing the known
+	 * marked images.
+	 * 
+	 * @param filename
+	 *            the filename of the file containing the filenames of the
+	 *            marked images.
 	 * @return a RF assistant object is returned.
-	 * @throws IOException if the file is not found.
+	 * @throws IOException
+	 *             if the file is not found.
 	 */
 	public static RFAssistant createRFAssistant(String filename)
 			throws IOException {
@@ -97,9 +111,14 @@ public class RFAssistant {
 
 	/**
 	 * Prints all marked images from a given query to a given outputfile.
-	 * @param filename the name of the outputfile.
-	 * @param query the query image of which the marked positives/negatives should be stored.
-	 * @throws IOException is thrown if there is a problem with creating the file.
+	 * 
+	 * @param filename
+	 *            the name of the outputfile.
+	 * @param query
+	 *            the query image of which the marked positives/negatives should
+	 *            be stored.
+	 * @throws IOException
+	 *             is thrown if there is a problem with creating the file.
 	 */
 	public static void printQueryHits(String filename, ImageContainer query)
 			throws IOException {
@@ -128,34 +147,38 @@ public class RFAssistant {
 			out.write(curr + System.getProperty("line.separator"));
 		out.close();
 	}
-	
+
 	/**
-	 * Revises the new positive/negative labeled images form the user, when there are inconsistencies compared to the already
-	 * known lists these inconsistencies get eliminated.
+	 * Revises the new positive/negative labeled images form the user, when
+	 * there are inconsistencies compared to the already known lists these
+	 * inconsistencies get eliminated.
+	 * 
 	 * @param positives
 	 * @param negatives
 	 */
-	public void revisePositivesAndNegatives(List<ImageContainer> positives, List<ImageContainer> negatives){
+	public void revisePositivesAndNegatives(List<ImageContainer> positives,
+			List<ImageContainer> negatives) {
 		Iterator<ImageContainer> it = positives.iterator();
 		int falsePositives = 0, falseNegatives = 0;
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			ImageContainer curr = it.next();
-			if(this.negatives.contains(curr.getFilename())){
+			if (this.negatives.contains(curr.getFilename())) {
 				falsePositives++;
 				negatives.add(curr);
 				it.remove();
 			}
 		}
 		it = negatives.iterator();
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			ImageContainer curr = it.next();
-			if(this.positives.contains(curr.getFilename())){
+			if (this.positives.contains(curr.getFilename())) {
 				falseNegatives++;
 				positives.add(curr);
 				it.remove();
 			}
 		}
-		System.out.println("corrected "+(falsePositives+falseNegatives)+" mistakes: fp="+falsePositives+" fn="+falseNegatives);
+		System.out.println("corrected " + (falsePositives + falseNegatives)
+				+ " mistakes: fp=" + falsePositives + " fn=" + falseNegatives);
 	}
 
 	public List<String> getPositives() {

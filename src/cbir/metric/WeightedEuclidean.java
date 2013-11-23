@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2013 Justus Piater,
+ * Intelligent and Interactive Systems Group,
+ * University of Innsbruck, Austria.
+ */
 package cbir.metric;
 
 import cbir.image.Descriptor;
@@ -15,13 +20,13 @@ public class WeightedEuclidean implements Metric {
 	/** The weights used. */
 	private double weights[] = null;
 
-	
 	/**
 	 * Constructor.
 	 */
 	public WeightedEuclidean() {
 		super();
 	}
+
 	/**
 	 * Constructor.
 	 */
@@ -42,7 +47,8 @@ public class WeightedEuclidean implements Metric {
 	 * 			The descriptor type of the image descriptors.
 	 * @returns the distance between image a and image b.
 	 */
-	public double distance(ImageContainer a, ImageContainer b, DescriptorType type) {
+	public double distance(ImageContainer a, ImageContainer b,
+			DescriptorType type) {
 		if (weights == null)
 			if (type == DescriptorType.MERGED)
 				initializeWeights(a, type);

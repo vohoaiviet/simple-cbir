@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2013 Justus Piater,
+ * Intelligent and Interactive Systems Group,
+ * University of Innsbruck, Austria.
+ */
 package cbir.reader;
 
 import java.io.File;
@@ -35,7 +40,8 @@ public class XMLReader {
 	 * @return a list of images with their descriptors.
 	 * @throws DocumentException
 	 */
-	public List<ImageContainer> parseXMLFile(File file) throws DocumentException {
+	public List<ImageContainer> parseXMLFile(File file)
+			throws DocumentException {
 
 		// Read XML file
 		SAXReader reader = new SAXReader();

@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2013 Justus Piater,
+ * Intelligent and Interactive Systems Group,
+ * University of Innsbruck, Austria.
+ */
 package cbir.metric;
 
 import java.util.List;
@@ -24,7 +29,8 @@ public class MetricUtility {
 	 * @param type
 	 *            The descriptor type used.
 	 */
-	public static double[] initializeWeights(ImageContainer query, DescriptorType type) {
+	public static double[] initializeWeights(ImageContainer query,
+			DescriptorType type) {
 		double[] weights = new double[query.getDescriptor(type).getValues().length];
 		if (type == DescriptorType.MERGED) {
 			List<DescriptorType> types = query.getOrder();

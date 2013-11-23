@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2013 Justus Piater,
+ * Intelligent and Interactive Systems Group,
+ * University of Innsbruck, Austria.
+ */
 package cbir.retriever;
 
 import ind.kdtree.KDTree;
@@ -12,23 +17,34 @@ import cbir.interfaces.Retriever;
 
 /**
  * A Retriever that uses a distance function for the ranking.
+ * 
  * @author Chris Wendler
  * 
  */
-public class RetrieverDistanceBased implements Retriever{
+public class RetrieverDistanceBased implements Retriever {
 	/** The image database defined by a list of images. **/
 	private List<ImageContainer> database;
-	/** The distance function that is used to compare the images in the database. **/
+	/**
+	 * The distance function that is used to compare the images in the database.
+	 **/
 	private Metric metric;
-	/** This hashmap contains the indexstructures for their corresponding descriptortypes. **/
+	/**
+	 * This hashmap contains the indexstructures for their corresponding
+	 * descriptortypes.
+	 **/
 	private final HashMap<DescriptorType, KDTree> trees;
 
 	/**
-	 * @param database is a list of images describing an image database.
-	 * @param metric determines which distance function is used.
-	 * @param types denote for which descriptortypes index structures should be generated.
+	 * @param database
+	 *            is a list of images describing an image database.
+	 * @param metric
+	 *            determines which distance function is used.
+	 * @param types
+	 *            denote for which descriptortypes index structures should be
+	 *            generated.
 	 */
-	public RetrieverDistanceBased(List<ImageContainer> database, Metric metric, DescriptorType ... types) {
+	public RetrieverDistanceBased(List<ImageContainer> database, Metric metric,
+			DescriptorType... types) {
 		this.database = database;
 		this.metric = metric;
 		this.trees = new HashMap<DescriptorType, KDTree>();
@@ -41,47 +57,62 @@ public class RetrieverDistanceBased implements Retriever{
 
 	/**
 	 * Finds the "amount" nearest neighbors of the given image.
-	 * @param image the query image.
-	 * @param type the descriptor type of interest.
-	 * @param amount the desired amount of nearest neighbors.
+	 * 
+	 * @param image
+	 *            the query image.
+	 * @param type
+	 *            the descriptor type of interest.
+	 * @param amount
+	 *            the desired amount of nearest neighbors.
 	 * @return The list of the nearest neighbors.
 	 */
-	public List<ImageContainer> findNearestNeighbors(final ImageContainer image,
-			final DescriptorType type, int amount) {
-		return Utility.findNearestNeighbors(database,amount,new ComparatorDistanceBased(image,metric,type));
+	public List<ImageContainer> findNearestNeighbors(
+			final ImageContainer image, final DescriptorType type, int amount) {
+		return Utility.findNearestNeighbors(database, amount,
+				new ComparatorDistanceBased(image, metric, type));
 	}
 
 	/**
-	 * Performs a search for the given query image and returns the "resultAmount" best results.
-	 * @param query the query image that is used.
-	 * @param resultAmount the desired amount of results.
+	 * Performs a search for the given query image and returns the
+	 * "resultAmount" best results.
+	 * 
+	 * @param query
+	 *            the query image that is used.
+	 * @param resultAmount
+	 *            the desired amount of results.
 	 * @return the best "resultAmount" results in a list.
 	 */
 	@Override
-	public List<ImageContainer> search(final ImageContainer query, 
+	public List<ImageContainer> search(final ImageContainer query,
 			final DescriptorType type, int resultAmount) {
 		if (trees.containsKey(type))
 			return trees.get(type).nearestNeighborSearch(resultAmount, query,
 					metric, type);
 
-  		return findNearestNeighbors(query, type, resultAmount);
+		return findNearestNeighbors(query, type, resultAmount);
 	}
 
 	/**
 	 * Prints a list of images to a given file in html format.
-	 * @param results the list of images to be printed.
-	 * @param type the descriptortype is also printed.
-	 * @param filename the filename of the target file.
+	 * 
+	 * @param results
+	 *            the list of images to be printed.
+	 * @param type
+	 *            the descriptortype is also printed.
+	 * @param filename
+	 *            the filename of the target file.
 	 */
 	@Override
-	public void printResultListHTML(List<ImageContainer> results, DescriptorType type,
-			String filename) {
+	public void printResultListHTML(List<ImageContainer> results,
+			DescriptorType type, String filename) {
 		Utility.printResultListHTML(results, type, filename);
 	}
 
 	/**
 	 * Queries for an image with a specific name.
-	 * @param name the filename of the image.
+	 * 
+	 * @param name
+	 *            the filename of the image.
 	 * @return The image object with the given filename or null if not found.
 	 */
 	@Override
@@ -91,6 +122,7 @@ public class RetrieverDistanceBased implements Retriever{
 
 	/**
 	 * A getter for the database.
+	 * 
 	 * @return a list of Images that describe the database.
 	 */
 	@Override

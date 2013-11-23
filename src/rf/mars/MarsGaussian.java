@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2013 Justus Piater,
+ * Intelligent and Interactive Systems Group,
+ * University of Innsbruck, Austria.
+ */
 package rf.mars;
 
 import java.util.List;
@@ -29,8 +34,8 @@ public class MarsGaussian implements RelevanceFeedback {
 	 *            the type of the descriptor which was used for the search
 	 * @return the weight matrix
 	 */
-	public double[] reweightFeatures(ImageContainer query, List<ImageContainer> positives,
-			DescriptorType type) {
+	public double[] reweightFeatures(ImageContainer query,
+			List<ImageContainer> positives, DescriptorType type) {
 		double[] means = Utility.calculateMeans(positives, type);
 		double[] deviations = Utility.calculateDeviations(positives, type,
 				means);
@@ -45,24 +50,35 @@ public class MarsGaussian implements RelevanceFeedback {
 	}
 
 	/**
-	 * Performs a relevance feedback iteration. Side effect:
-	 * all the RF Methods add the positively and negatively marked images to the query Image object.
-	 * @param retriever the retriever which is used to search.
-	 * @param query the query image.
-	 * @param type the descriptortype which was used for the query.
-	 * @param positives the images marked as positive.
-	 * @param negatives the images marked as negative.
-	 * @param resultAmount the number of desired results.
+	 * Performs a relevance feedback iteration. Side effect: all the RF Methods
+	 * add the positively and negatively marked images to the query Image
+	 * object.
+	 * 
+	 * @param retriever
+	 *            the retriever which is used to search.
+	 * @param query
+	 *            the query image.
+	 * @param type
+	 *            the descriptortype which was used for the query.
+	 * @param positives
+	 *            the images marked as positive.
+	 * @param negatives
+	 *            the images marked as negative.
+	 * @param resultAmount
+	 *            the number of desired results.
 	 * @return the results after considering the user feedback.
 	 */
 	@Override
 	public List<ImageContainer> relevanceFeedbackIteration(Retriever retriever,
-			ImageContainer query, DescriptorType type, Metric metric, List<ImageContainer> positives,
-			List<ImageContainer> negatives, int resultAmount) {
+			ImageContainer query, DescriptorType type, Metric metric,
+			List<ImageContainer> positives, List<ImageContainer> negatives,
+			int resultAmount) {
 		Utility.addImagesToList(query.getPositives(), positives);
 		Utility.addImagesToList(query.getNegatives(), negatives);
-		return new RetrieverDistanceBased(retriever.getDatabase(),new WeightedEuclidean(reweightFeatures(query, query.getPositives(), type))).search(query,
-				type, resultAmount);
+		return new RetrieverDistanceBased(retriever.getDatabase(),
+				new WeightedEuclidean(reweightFeatures(query,
+						query.getPositives(), type))).search(query, type,
+				resultAmount);
 	}
 
 }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2013 Justus Piater,
+ * Intelligent and Interactive Systems Group,
+ * University of Innsbruck, Austria.
+ */
 package cbir.retriever;
 
 import java.util.Comparator;
@@ -9,9 +14,10 @@ import cbir.interfaces.Retriever;
 import cbir.interfaces.Score;
 
 /**
- * A Retriever that uses a score function for the ranking instead of a distance function.
- * NOTE: The score based retriever is not compatible with indexing, since our index structure
- * did not improve the results.
+ * A Retriever that uses a score function for the ranking instead of a distance
+ * function. NOTE: The score based retriever is not compatible with indexing,
+ * since our index structure did not improve the results.
+ * 
  * @author Chris Wendler
  * 
  */
@@ -23,8 +29,10 @@ public class RetrieverScoreBased implements Retriever {
 	private Score score;
 
 	/**
-	 * @param database is a list of images describing an image database.
-	 * @param score determines which scoring function is used.
+	 * @param database
+	 *            is a list of images describing an image database.
+	 * @param score
+	 *            determines which scoring function is used.
 	 */
 	public RetrieverScoreBased(List<ImageContainer> database, Score score) {
 		this.database = database;
@@ -33,13 +41,17 @@ public class RetrieverScoreBased implements Retriever {
 
 	/**
 	 * Finds the "amount" nearest neighbors of the given image.
-	 * @param image the query image.
-	 * @param type the descriptor type of interest.
-	 * @param amount the desired amount of nearest neighbors.
+	 * 
+	 * @param image
+	 *            the query image.
+	 * @param type
+	 *            the descriptor type of interest.
+	 * @param amount
+	 *            the desired amount of nearest neighbors.
 	 * @return The list of the nearest neighbors.
 	 */
-	public List<ImageContainer> findNearestNeighbors(final ImageContainer image,
-			final DescriptorType type, int amount) {
+	public List<ImageContainer> findNearestNeighbors(
+			final ImageContainer image, final DescriptorType type, int amount) {
 		return Utility.findNearestNeighbors(database, amount,
 				new Comparator<ImageContainer>() {
 					@Override
@@ -52,36 +64,46 @@ public class RetrieverScoreBased implements Retriever {
 							return 1;
 						return 0;
 					}
-		});
+				});
 	}
 
 	/**
-	 * Performs a search for the given query image and returns the "resultAmount" best results.
-	 * @param query the query image that is used.
-	 * @param resultAmount the desired amount of results.
+	 * Performs a search for the given query image and returns the
+	 * "resultAmount" best results.
+	 * 
+	 * @param query
+	 *            the query image that is used.
+	 * @param resultAmount
+	 *            the desired amount of results.
 	 * @return the best "resultAmount" results in a list.
 	 */
 	@Override
-	public List<ImageContainer> search(final ImageContainer query, final DescriptorType type,
-			int resultAmount) {
+	public List<ImageContainer> search(final ImageContainer query,
+			final DescriptorType type, int resultAmount) {
 		return findNearestNeighbors(query, type, resultAmount);
 	}
 
 	/**
 	 * Prints a list of images to a given file in html format.
-	 * @param results the list of images to be printed.
-	 * @param type the descriptortype is also printed.
-	 * @param filename the filename of the target file.
+	 * 
+	 * @param results
+	 *            the list of images to be printed.
+	 * @param type
+	 *            the descriptortype is also printed.
+	 * @param filename
+	 *            the filename of the target file.
 	 */
 	@Override
-	public void printResultListHTML(List<ImageContainer> results, DescriptorType type,
-			String filename) {
+	public void printResultListHTML(List<ImageContainer> results,
+			DescriptorType type, String filename) {
 		Utility.printResultListHTML(results, type, filename);
 	}
 
 	/**
 	 * Queries for an image with a specific name.
-	 * @param name the filename of the image.
+	 * 
+	 * @param name
+	 *            the filename of the image.
 	 * @return The image object with the given filename or null if not found.
 	 */
 	@Override
@@ -91,6 +113,7 @@ public class RetrieverScoreBased implements Retriever {
 
 	/**
 	 * A getter for the database.
+	 * 
 	 * @return a list of Images that describe the database.
 	 */
 	@Override

@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2013 Justus Piater,
+ * Intelligent and Interactive Systems Group,
+ * University of Innsbruck, Austria.
+ */
 package cbir.score;
 
 import java.util.List;
@@ -8,9 +13,9 @@ import cbir.interfaces.Metric;
 import cbir.interfaces.Score;
 import cbir.retriever.ComparatorDistanceBased;
 
-
 /**
- * Provides the NN score stabilization using a random variable that determines how reliable the NN score is. 
+ * Provides the NN score stabilization using a random variable that determines
+ * how reliable the NN score is.
  * 
  * @author Chris Wendler
  */

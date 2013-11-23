@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2013 Justus Piater,
+ * Intelligent and Interactive Systems Group,
+ * University of Innsbruck, Austria.
+ */
 package cbir.score;
 
 import java.util.Comparator;
@@ -67,11 +72,18 @@ public class BayesScore implements cbir.interfaces.Score {
 					}
 				}).get(0);
 	}
+
 	/**
 	 * Calculates a score for the given image.
-	 * @param query the query vector containing all positively and negatively marked images.
-	 * @param image the image for which the score is computed.
-	 * @param type the type of descriptor which is considered in the score computation.
+	 * 
+	 * @param query
+	 *            the query vector containing all positively and negatively
+	 *            marked images.
+	 * @param image
+	 *            the image for which the score is computed.
+	 * @param type
+	 *            the type of descriptor which is considered in the score
+	 *            computation.
 	 * @return the score of the image.
 	 */
 	@Override
