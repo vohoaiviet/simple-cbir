@@ -1,0 +1,1 @@
+This application is intended to function as a proof-of-concept implementation of a cbir system based on several simple core technologies such as: Descriptors, Metrics, Indexing and Relevance Feedback.
